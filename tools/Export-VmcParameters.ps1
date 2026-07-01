@@ -1,5 +1,5 @@
 param(
-  [string]$HomeAssistantUrl = "http://192.168.60.100:8123",
+  [string]$HomeAssistantUrl = "http://homeassistant.local:8123",
   [string]$Token = $env:HA_TOKEN,
   [string]$OutputDirectory = ".",
   [string]$CatalogPath = ".\vmc_parametri_catalogo.csv"

@@ -1,0 +1,55 @@
+name: ESPHome CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate-and-compile:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - config: devices/vmc-gateway-esp32s3-redc-r9.yaml
+            node_name: vmc-redc-ci
+            friendly_name: VMC_REDC_CI
+          - config: devices/vmc-gateway-esp32s3-let-c.yaml
+            node_name: vmc-letc-ci
+            friendly_name: VMC_LETC_CI
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install ESPHome
+        run: |
+          python -m pip install --upgrade pip
+          pip install esphome==2026.6.4
+
+      - name: Show ESPHome version
+        run: python -m esphome version
+
+      - name: Validate config
+        run: >
+          python -m esphome
+          -s name ${{ matrix.node_name }}
+          -s friendly_name ${{ matrix.friendly_name }}
+          config
+          ${{ matrix.config }}
+
+      - name: Compile firmware
+        run: >
+          python -m esphome
+          -s name ${{ matrix.node_name }}
+          -s friendly_name ${{ matrix.friendly_name }}
+          compile
+          ${{ matrix.config }}

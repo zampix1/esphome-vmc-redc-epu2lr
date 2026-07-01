@@ -2,15 +2,11 @@
 
 Manuali analizzati:
 
-- [104CP3K0A103.pdf](C:/Users/Master/Desktop/VMC/104CP3K0A103.pdf)
-- [114CP3UKE114.pdf](C:/Users/Master/Desktop/VMC/114CP3UKE114.pdf)
-- [114CP3UKI114.pdf](C:/Users/Master/Desktop/VMC/114CP3UKI114.pdf)
+- `104CP3K0A103` datasheet EVCO
+- `114CP3UKE114` EVCO hardware manual (English)
+- `114CP3UKI114` EVCO hardware manual (Italian)
 
-Estratti locali generati:
-
-- [104CP3K0A103.txt](C:/Users/Master/Documents/Codex/2026-04-27/continuiamo-solo-sulla-vmc-esphome-ora/104CP3K0A103.txt)
-- [114CP3UKE114.txt](C:/Users/Master/Documents/Codex/2026-04-27/continuiamo-solo-sulla-vmc-esphome-ora/114CP3UKE114.txt)
-- [114CP3UKI114.txt](C:/Users/Master/Documents/Codex/2026-04-27/continuiamo-solo-sulla-vmc-esphome-ora/114CP3UKI114.txt)
+Per il repository pubblico, i PDF originali non vengono replicati. Vedi i link ufficiali in [docs/it/politica-fonti.md](it/politica-fonti.md) e [docs/en/source-policy.md](en/source-policy.md).
 
 ## 1. Che cosa sono questi tre documenti
 
@@ -59,7 +55,7 @@ Questo combacia bene con la VMC che stiamo leggendo.
 
 ## 3. Cosa implica per il tuo EPU2LR
 
-Il codice articolo `EPU2LR` non compare in chiaro nel testo estratto dei PDF, ma dato che hai confermato il modello e dato l'hardware che stiamo vedendo sul campo, il quadro coerente e' questo:
+Il codice articolo `EPU2LR` non compare in chiaro nel testo estratto dei PDF, ma dato che il modello e' stato confermato sul campo e dato l'hardware osservato, il quadro coerente e' questo:
 
 - il controllore appartiene alla famiglia `c-pro 3 kilo`
 - usa CAN per il terminale remoto EPJ-Graph

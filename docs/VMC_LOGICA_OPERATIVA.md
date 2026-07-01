@@ -1,12 +1,12 @@
 # VMC RED C r9 EPJ-Graph - Logica operativa completa
 
-Fonte analizzata: `VMC RED C r9 (EPJ-Graph) - Manuale COMPLETO IDROCENTRO (2).PDF`.
+Fonte analizzata: manuale applicativo RED C r9 / EPJ-Graph usato durante la validazione sul campo.
 
 Questa nota sintetizza la logica funzionale della macchina, non la parte meccanica di installazione. Gli indirizzi Modbus sono indicati in **base 0**, coerenti con Home Assistant/ESPHome e con la vecchia configurazione funzionante.
 
 ## 0. Conferme dalla rilettura del PDF
 
-Rilettura fatta sul PDF `C:\Users\Master\Downloads\Telegram Desktop\VMC RED C r9 (EPJ-Graph) - Manuale COMPLETO IDROCENTRO.PDF`, incluse le schermate/figure del controllo EPJ-Graph.
+Rilettura fatta sul manuale applicativo RED C r9 / EPJ-Graph, incluse le schermate e le figure del controllo EPJ-Graph.
 
 Conferme operative importanti:
 

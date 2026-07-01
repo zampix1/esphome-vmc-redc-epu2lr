@@ -2,83 +2,68 @@
 
 Unofficial ESPHome packages and example configurations for VMC units based on the EVCO `EPU2LR` / `c-pro 3 kilo` family.
 
-This repository now contains **two explicit Modbus variants**:
+Language:
+
+- English: this page
+- Italian: [README.it.md](README.it.md)
+
+## Project scope
+
+This repository currently targets two explicit Modbus variants:
 
 - **RED C r9 / EPJ-Graph**
-- **LET-C**
+- **VMC Italia LET-C**
 
-They share a lot of logic, but **the upper Modbus register map is not identical**. Do not assume one package fits both.
+They share the same EVCO hardware family and a similar operating model, but the upper Modbus register map is **not identical**. Do not assume one package fits both.
 
-## Variants
+## Supported variants
 
-| Variant | Package | Status | Notes |
+| Variant | Package | Device import | Status |
 |---|---|---|---|
-| RED C r9 / EPJ-Graph | `packages/vmc_redc_r9_epjgraph.yaml` | Field-tested | Built from your working gateway and cross-checked against the RED C r9 manual. |
-| LET-C | `packages/vmc_let_c.yaml` | Document-derived | Mapped against the LET-C manual. Not field-tested on a real LET-C unit. |
-| Legacy compatibility path | `packages/vmc_redc_epu2lr.yaml` | Compatibility | Preserved for older import URLs; use the explicit RED C r9 package for new setups. |
+| RED C r9 / EPJ-Graph | `packages/vmc_redc_r9_epjgraph.yaml` | `devices/vmc-gateway-esp32s3-redc-r9.yaml` | Field-tested |
+| LET-C | `packages/vmc_let_c.yaml` | `devices/vmc-gateway-esp32s3-let-c.yaml` | Document-derived |
+| Legacy compatibility path | `packages/vmc_redc_epu2lr.yaml` | `devices/vmc-gateway-esp32s3.yaml` | Compatibility only |
 
-## What is included
+## VMC families covered
 
-- `packages/vmc_redc_r9_epjgraph.yaml`  
-  Canonical RED C r9 / EPJ-Graph package.
-- `packages/vmc_let_c.yaml`  
-  LET-C package with its own upper register map.
-- `packages/vmc_redc_epu2lr.yaml`  
-  Backward-compatible package path kept for existing imports.
-- `devices/vmc-gateway-esp32s3-redc-r9.yaml`  
-  Full importable example for RED C r9 / EPJ-Graph.
-- `devices/vmc-gateway-esp32s3-let-c.yaml`  
-  Full importable example for LET-C.
-- `devices/vmc-gateway-esp32s3.yaml`  
-  Legacy RED C example path retained for compatibility.
-- `home-assistant/vmc-dashboard.yaml`  
-  Dashboard originally built around the RED C r9 variant.
-- `home-assistant/vmc-dashboard-redc-r9.yaml`  
-  Explicitly named copy of the same dashboard.
-- `tools/Export-VmcParameters.ps1`  
-  PowerShell export tool for Home Assistant entity snapshots.
-- `docs/`  
-  Notes about the RED C application logic, EVCO hardware family and addressing caveats.
+| Family | Models covered in docs | Airflow reference |
+|---|---|---|
+| RED C | `15-30`, `15-30 Vertical`, `25-50`, `25-50 Vertical` | 150/300 m3/h and 250/500 m3/h classes |
+| LET-C | `15-30`, `15-30 V`, `25-50`, `25-50 V` | 150/300 m3/h and 250/500 m3/h classes |
 
-## Hardware assumptions
+The EVCO platform assumptions used by this project are:
 
-The example gateway is built around an ESP32-S3 RS485 board with:
+- controller family: `c-pro 3 kilo` / model family `EPU2LR`
+- USB OTG for upload/download of parameters
+- CAN bus for the remote terminal
+- RS-485 Modbus RTU slave for external integration
+- 6 AI / 5 DI / 3 AO / 7 DO on the base hardware family
 
-- `GPIO17` = RS485 TX
-- `GPIO18` = RS485 RX
-- `GPIO21` = RS485 DE/RE
+## Repository layout
 
-Adjust substitutions if your board differs.
+- `packages/` - reusable ESPHome packages
+- `devices/` - importable example nodes
+- `home-assistant/` - dashboard YAML examples
+- `tools/` - helper scripts
+- `docs/` - technical notes, bilingual documentation, source policy
 
 ## Quick start
 
 ### RED C r9 / EPJ-Graph
-
-Full example:
 
 ```yaml
 packages:
   vmc: github://zampix1/esphome-vmc-redc-epu2lr/packages/vmc_redc_r9_epjgraph.yaml@main
 ```
 
-Importable device:
-
-`devices/vmc-gateway-esp32s3-redc-r9.yaml`
-
 ### LET-C
-
-Full example:
 
 ```yaml
 packages:
   vmc: github://zampix1/esphome-vmc-redc-epu2lr/packages/vmc_let_c.yaml@main
 ```
 
-Importable device:
-
-`devices/vmc-gateway-esp32s3-let-c.yaml`
-
-## Common custom node skeleton
+### Common node skeleton
 
 ```yaml
 substitutions:
@@ -112,22 +97,54 @@ captive_portal:
 web_server:
   port: 80
   version: 3
-
-packages:
-  vmc: github://zampix1/esphome-vmc-redc-epu2lr/packages/vmc_redc_r9_epjgraph.yaml@main
 ```
 
-Swap the package path for `vmc_let_c.yaml` if you are targeting LET-C.
+Then import the variant package you actually need.
 
-## Notes
+## Documentation
 
-- Protected installer parameters are written with authenticated back-to-back Modbus writes.
-- Invalid CAN temperature/humidity sensors are hidden internally.
-- Temperature and percentage sensors include sanity filters to avoid sentinel spikes.
-- Register addresses in this project are **Base 0**.
-- In the RED C and LET-C PDFs, OCR/text extraction often shows the hexadecimal address (`Base 0`) together with the decimal `Base 1` column. Read the hexadecimal address if you want the value used by these packages.
-- The included dashboard was built around the RED C r9 variant. It should mostly work on LET-C for common entities, but it is not yet curated specifically for LET-C-only parameters.
-- This is not an official EVCO, VMC Italia or RED C project.
+Repo docs:
+
+- [Italian docs index](docs/it/README.md)
+- [English docs index](docs/en/README.md)
+- [Variants](docs/VARIANTS.md)
+- [RED C operating logic](docs/VMC_LOGICA_OPERATIVA.md)
+- [EVCO hardware analysis](docs/EVCO_EPU2LR_ANALISI.md)
+
+GitHub Wiki:
+
+- Wiki home (EN): <https://github.com/zampix1/esphome-vmc-redc-epu2lr/wiki>
+- Wiki home (IT): <https://github.com/zampix1/esphome-vmc-redc-epu2lr/wiki/Home-IT>
+
+## Community
+
+- Discussions: <https://github.com/zampix1/esphome-vmc-redc-epu2lr/discussions>
+- Issues: use issues for reproducible bugs and missing mappings
+
+## CI
+
+GitHub Actions validates and compiles both example variants on every push to `main`, on pull requests, and on manual workflow dispatch.
+
+## Source and media policy
+
+This repository distributes **original code and original documentation notes** under MIT, but it does **not** mirror vendor PDFs, scanned manuals or vendor product photos.
+
+Why:
+
+- EVCO manuals explicitly forbid reproduction/disclosure without authorization.
+- VMC Italia site and media remain third-party content.
+- Public repositories should not vendor third-party binaries or images unless the license is explicit.
+
+What this repo does instead:
+
+- links to official product pages and manuals
+- summarizes technical data in original wording
+- keeps field notes and reverse-mapped register information
+
+See:
+
+- [English source policy](docs/en/source-policy.md)
+- [Italian source policy](docs/it/politica-fonti.md)
 
 ## Home Assistant
 
@@ -135,8 +152,10 @@ If you want the dashboard:
 
 1. Copy `home-assistant/vmc-dashboard.yaml` or `home-assistant/vmc-dashboard-redc-r9.yaml` into your HA dashboards folder.
 2. Add the dashboard entry to `configuration.yaml`.
-3. Ensure `button-card` is installed if you want the custom button cards used by the dashboard.
+3. Install `button-card` if you want the custom button cards used by the dashboard.
 
 ## License
 
-MIT
+Repository code and original documentation: MIT.
+
+Third-party manuals, datasheets, screenshots and vendor images are **not** relicensed by this project.
