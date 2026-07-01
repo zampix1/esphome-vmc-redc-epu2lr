@@ -1,0 +1,1532 @@
+substitutions:
+  modbus_tx_pin: GPIO17
+  modbus_rx_pin: GPIO18
+  modbus_flow_control_pin: GPIO21
+  modbus_address: "1"
+  modbus_baud_rate: "19200"
+  modbus_stop_bits: "2"
+  modbus_parity: NONE
+  modbus_send_wait_time: 150ms
+  vmc_update_interval: 10s
+  vmc_command_throttle: 100ms
+
+uart:
+  id: uart_modbus
+  tx_pin: ${modbus_tx_pin}
+  rx_pin: ${modbus_rx_pin}
+  baud_rate: ${modbus_baud_rate}
+  stop_bits: ${modbus_stop_bits}
+  parity: ${modbus_parity}
+
+modbus:
+  id: mb_vmc
+  uart_id: uart_modbus
+  flow_control_pin: ${modbus_flow_control_pin}
+  send_wait_time: ${modbus_send_wait_time}
+
+modbus_controller:
+  - id: vmc_ctrl
+    address: ${modbus_address}
+    modbus_id: mb_vmc
+    update_interval: ${vmc_update_interval}
+    command_throttle: ${vmc_command_throttle}
+    on_online:
+      then:
+        - binary_sensor.template.publish:
+            id: vmc_online
+            state: ON
+    on_offline:
+      then:
+        - binary_sensor.template.publish:
+            id: vmc_online
+            state: OFF
+
+binary_sensor:
+  - platform: template
+    id: vmc_online
+    name: "VMC Online"
+    device_class: connectivity
+
+  - platform: status
+    name: "VMC Gateway Status"
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Allarme Attivo"
+    register_type: holding
+    address: 10
+    bitmask: 1
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Compressore Attivo"
+    register_type: read
+    address: 38
+    bitmask: 1
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Alimentazione Ventilatori"
+    register_type: read
+    address: 39
+    bitmask: 1
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Bypass Aperto"
+    register_type: read
+    address: 40
+    bitmask: 1
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Ricircolo Aperto"
+    register_type: read
+    address: 41
+    bitmask: 1
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Valvola Scambiatore Aperta"
+    register_type: read
+    address: 42
+    bitmask: 1
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Uscita 6 Configurabile"
+    register_type: read
+    address: 43
+    bitmask: 1
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Uscita 7 Configurabile"
+    register_type: read
+    address: 44
+    bitmask: 1
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Ingresso 1"
+    register_type: read
+    address: 45
+    bitmask: 1
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Ingresso 2"
+    register_type: read
+    address: 46
+    bitmask: 1
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Ingresso 3"
+    register_type: read
+    address: 47
+    bitmask: 1
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Ingresso 4"
+    register_type: read
+    address: 48
+    bitmask: 1
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Ingresso 5"
+    register_type: read
+    address: 49
+    bitmask: 1
+
+sensor:
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    id: vmc_velocita_attiva_vmc
+    name: "VMC Velocita attiva VMC"
+    register_type: holding
+    address: 1
+    value_type: U_WORD
+    accuracy_decimals: 0
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    id: vmc_modalita_attiva
+    name: "VMC Modalita attiva"
+    register_type: holding
+    address: 6
+    value_type: U_WORD
+    accuracy_decimals: 0
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Temperatura Immissione"
+    register_type: read
+    address: 25
+    value_type: S_WORD
+    unit_of_measurement: "°C"
+    device_class: temperature
+    state_class: measurement
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+      - lambda: |-
+          if (x < -50.0f || x > 100.0f) return NAN;
+          return x;
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Temperatura Rinnovo"
+    register_type: read
+    address: 26
+    value_type: S_WORD
+    unit_of_measurement: "°C"
+    device_class: temperature
+    state_class: measurement
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+      - lambda: |-
+          if (x < -50.0f || x > 100.0f) return NAN;
+          return x;
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Temperatura Ripresa"
+    register_type: read
+    address: 27
+    value_type: S_WORD
+    unit_of_measurement: "°C"
+    device_class: temperature
+    state_class: measurement
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+      - lambda: |-
+          if (x < -50.0f || x > 100.0f) return NAN;
+          return x;
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Temperatura H2O IN"
+    register_type: read
+    address: 28
+    value_type: S_WORD
+    unit_of_measurement: "°C"
+    device_class: temperature
+    state_class: measurement
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+      - lambda: |-
+          if (x < -50.0f || x > 100.0f) return NAN;
+          return x;
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Temperatura Condensatore"
+    register_type: read
+    address: 29
+    value_type: S_WORD
+    unit_of_measurement: "°C"
+    device_class: temperature
+    state_class: measurement
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+      - lambda: |-
+          if (x < -50.0f || x > 100.0f) return NAN;
+          return x;
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Temperatura Evaporatore"
+    register_type: read
+    address: 30
+    value_type: S_WORD
+    unit_of_measurement: "°C"
+    device_class: temperature
+    state_class: measurement
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+      - lambda: |-
+          if (x < -50.0f || x > 100.0f) return NAN;
+          return x;
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Temperatura Display"
+    register_type: read
+    address: 31
+    value_type: S_WORD
+    unit_of_measurement: "°C"
+    device_class: temperature
+    state_class: measurement
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+      - lambda: |-
+          if (x < -50.0f || x > 100.0f) return NAN;
+          return x;
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    id: vmc_umidita_display
+    name: "VMC Umidita Display"
+    register_type: read
+    address: 32
+    value_type: S_WORD
+    unit_of_measurement: "%"
+    device_class: humidity
+    state_class: measurement
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+      - lambda: |-
+          if (x < 0.0f || x > 100.0f) return NAN;
+          return x;
+
+  - platform: template
+    name: "VMC Umidita Display Filtrata"
+    id: vmc_umidita_display_filtrata
+    unit_of_measurement: "%"
+    device_class: humidity
+    state_class: measurement
+    accuracy_decimals: 1
+    lambda: |-
+      const float v = id(vmc_umidita_display).state;
+      if (!isnan(v) && v >= 0.0f && v <= 100.0f) return v;
+      return {};
+    update_interval: 10s
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    id: vmc_codice_evento
+    name: "VMC Codice Evento"
+    register_type: holding
+    address: 12
+    value_type: U_WORD
+    accuracy_decimals: 0
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Numero Evento"
+    register_type: holding
+    address: 13
+    value_type: U_DWORD_R
+    accuracy_decimals: 0
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Ora Evento Raw"
+    register_type: holding
+    address: 15
+    value_type: U_DWORD_R
+    unit_of_measurement: "s"
+    accuracy_decimals: 0
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Contaore Filtri"
+    register_type: holding
+    address: 20
+    value_type: U_DWORD_R
+    unit_of_measurement: "h"
+    state_class: total_increasing
+    accuracy_decimals: 0
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Contaore Totali"
+    register_type: holding
+    address: 22
+    value_type: U_DWORD_R
+    unit_of_measurement: "h"
+    state_class: total_increasing
+    accuracy_decimals: 0
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    internal: true
+    name: "VMC Temperatura CAN"
+    register_type: read
+    address: 33
+    value_type: S_WORD
+    unit_of_measurement: "°C"
+    device_class: temperature
+    state_class: measurement
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+      - lambda: |-
+          if (x < -50.0f || x > 100.0f) return NAN;
+          return x;
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    internal: true
+    name: "VMC Umidita CAN"
+    register_type: read
+    address: 34
+    value_type: S_WORD
+    unit_of_measurement: "%"
+    device_class: humidity
+    state_class: measurement
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+      - lambda: |-
+          if (x < 0.0f || x > 100.0f) return NAN;
+          return x;
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Apertura Valvola H2O IN"
+    register_type: read
+    address: 35
+    value_type: U_WORD
+    unit_of_measurement: "%"
+    state_class: measurement
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.01
+      - lambda: |-
+          if (x < 0.0f || x > 100.0f) return NAN;
+          return x;
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Velocita Ventilatore Espulsione"
+    register_type: read
+    address: 36
+    value_type: U_WORD
+    unit_of_measurement: "%"
+    state_class: measurement
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.01
+      - lambda: |-
+          if (x < 0.0f || x > 100.0f) return NAN;
+          return x;
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Velocita Ventilatore Immissione"
+    register_type: read
+    address: 37
+    value_type: U_WORD
+    unit_of_measurement: "%"
+    state_class: measurement
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.01
+      - lambda: |-
+          if (x < 0.0f || x > 100.0f) return NAN;
+          return x;
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Stato Accensione Compressore"
+    register_type: read
+    address: 38
+    value_type: U_WORD
+    accuracy_decimals: 0
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Stato Alimentazione Ventilatori"
+    register_type: read
+    address: 39
+    value_type: U_WORD
+    accuracy_decimals: 0
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Stato Apertura Bypass"
+    register_type: read
+    address: 40
+    value_type: U_WORD
+    accuracy_decimals: 0
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Stato Apertura Ricircolo"
+    register_type: read
+    address: 41
+    value_type: U_WORD
+    accuracy_decimals: 0
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Stato Apertura Valvola Scambiatore"
+    register_type: read
+    address: 42
+    value_type: U_WORD
+    accuracy_decimals: 0
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Software Type"
+    register_type: read
+    address: 50
+    value_type: U_WORD
+    accuracy_decimals: 0
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Software Version"
+    register_type: read
+    address: 51
+    value_type: U_WORD
+    accuracy_decimals: 2
+    filters:
+      - multiply: 0.01
+
+text_sensor:
+  - platform: template
+    name: "VMC Current Speed"
+    lambda: |-
+      if (!id(vmc_velocita_attiva_vmc).has_state()) return {"unknown"};
+      switch ((int) id(vmc_velocita_attiva_vmc).state) {
+        case 0: return {"Off"};
+        case 1: return {"Velocita1"};
+        case 2: return {"Velocita2"};
+        case 3: return {"Velocita3"};
+        case 4: return {"Velocita auto1"};
+        case 5: return {"Velocita auto2"};
+        case 6: return {"Velocita1 STBY"};
+        case 7: return {"Velocita2 STBY"};
+        case 8: return {"Velocita3 STBY"};
+        case 9: return {"Velocita auto1 STBY"};
+        case 10: return {"Velocita auto2 STBY"};
+        case 11: return {"OFF remoto"};
+        case 12: return {"Velocita1 remoto"};
+        case 13: return {"Velocita2 remoto"};
+        case 14: return {"Velocita3 remoto"};
+        case 15: return {"Velocita auto1 remoto"};
+        case 16: return {"Velocita auto2 remoto"};
+        case 17: return {"Manutenzione"};
+        default: return {"unknown"};
+      }
+    update_interval: 10s
+
+  - platform: template
+    name: "VMC Modalita Attiva Testo"
+    lambda: |-
+      if (!id(vmc_modalita_attiva).has_state()) return {"unknown"};
+      switch ((int) id(vmc_modalita_attiva).state) {
+        case 0: return {"Off"};
+        case 1: return {"Ventilazione"};
+        case 2: return {"Deumidifica"};
+        case 3: return {"Integrazione"};
+        case 4: return {"Deum+Integ"};
+        case 5: return {"Ricircolo"};
+        case 6: return {"Vent+Deum"};
+        case 7: return {"Vent+Integ"};
+        case 8: return {"Vent+Deu+Int"};
+        case 9: return {"Vent+Ricirc"};
+        case 10: return {"Manutenzione"};
+        case 11: return {"Stand-By"};
+        case 12: return {"Deum STBY"};
+        case 13: return {"Integ STBY"};
+        case 14: return {"Deum+Integ STBY"};
+        case 15: return {"Vent+Deum STBY"};
+        case 16: return {"Vent+Integ STBY"};
+        case 17: return {"Vent+Deu+Int STBY"};
+        default: return {"unknown"};
+      }
+    update_interval: 10s
+
+  - platform: template
+    name: "VMC Evento Testo"
+    lambda: |-
+      if (!id(vmc_codice_evento).has_state()) return {"unknown"};
+      switch ((int) id(vmc_codice_evento).state) {
+        case 0: return {"Nessun evento"};
+        case 1: return {"Reset allarmi"};
+        case 2: return {"Reset filtri"};
+        case 3: return {"Allarme alta pressione"};
+        case 4: return {"Allarme bassa pressione"};
+        case 5: return {"Allarme mancanza freon"};
+        case 6: return {"Allarme alta temperatura H2O"};
+        case 7: return {"Allarme bassa temperatura"};
+        case 8: return {"Allarme NTC condensatore"};
+        case 9: return {"Allarme NTC evaporatore"};
+        case 10: return {"Allarme NTC ripresa"};
+        case 11: return {"Allarme NTC immissione"};
+        case 12: return {"Allarme NTC rinnovo"};
+        case 13: return {"Allarme NTC H2O IN"};
+        case 14: return {"Allarme sonda temperatura display"};
+        case 15: return {"Allarme sonda umidita display"};
+        case 16: return {"Allarme sonda temperatura CAN"};
+        case 17: return {"Allarme sonda umidita CAN"};
+        case 18: return {"Blocco da allarme filtri"};
+        case 19: return {"Allarme filtri"};
+        case 20: return {"Mancanza acqua fredda"};
+        default: return {"Evento sconosciuto"};
+      }
+    update_interval: 10s
+
+select:
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Speed"
+    address: 0
+    value_type: U_WORD
+    optimistic: false
+    optionsmap:
+      "Off": 0
+      "Velocita1": 1
+      "Velocita2": 2
+      "Velocita3": 3
+      "Velocita auto1": 4
+      "Velocita auto2": 5
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Ventilation Mode"
+    address: 2
+    value_type: U_WORD
+    optimistic: false
+    optionsmap:
+      "OFF": 0
+      "ON": 1
+      "Remoto": 2
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Dehumidification Mode"
+    address: 3
+    value_type: U_WORD
+    optimistic: false
+    optionsmap:
+      "OFF": 0
+      "ON": 1
+      "Remoto": 2
+      "Auto/Remoto": 3
+      "Auto": 4
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Integration Mode"
+    address: 4
+    value_type: U_WORD
+    optimistic: false
+    optionsmap:
+      "OFF": 0
+      "ON": 1
+      "Remoto": 2
+      "Auto/Remoto": 3
+      "Auto": 4
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Recirculation Mode"
+    address: 5
+    value_type: U_WORD
+    optimistic: false
+    optionsmap:
+      "OFF": 0
+      "ON": 1
+      "Remoto": 2
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Season Control Mode"
+    address: 7
+    value_type: U_WORD
+    optimistic: false
+    optionsmap:
+      "Manuale": 0
+      "Auto": 1
+      "Remoto": 2
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Season"
+    address: 8
+    value_type: U_WORD
+    optimistic: false
+    optionsmap:
+      "Inverno": 0
+      "Estate": 1
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Fasce Orarie"
+    address: 9
+    value_type: U_WORD
+    optimistic: false
+    optionsmap:
+      "OFF": 0
+      "ON": 1
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Dehumidification Compressor"
+    address: 138
+    value_type: U_WORD
+    optimistic: false
+    optionsmap:
+      "Sempre": 0
+      "Solo inverno": 1
+      "Solo estate": 2
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Integration Season Enable"
+    address: 146
+    value_type: U_WORD
+    optimistic: false
+    optionsmap:
+      "Sempre": 0
+      "Solo inverno": 1
+      "Solo estate": 2
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    name: "VMC Bypass Function"
+    address: 159
+    value_type: U_WORD
+    optimistic: false
+    optionsmap:
+      "Disabilitato": 0
+      "Solo freecooling": 1
+      "Solo freeheating": 2
+      "Freecooling/freeheating": 3
+
+number:
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    id: vmc_set_temperatura_inverno_raw
+    internal: true
+    name: "VMC Set Temperatura Inverno Raw"
+    address: 99
+    value_type: U_WORD
+    min_value: 0
+    max_value: 50
+    step: 0.1
+    unit_of_measurement: "°C"
+    lambda: "return x * 0.1f;"
+    write_lambda: |-
+      payload.push_back((uint16_t) (x * 10.0f));
+      return x;
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    id: vmc_set_umidita_inverno_raw
+    internal: true
+    name: "VMC Set Umidita Inverno Raw"
+    address: 100
+    value_type: U_WORD
+    min_value: 30
+    max_value: 90
+    step: 0.1
+    unit_of_measurement: "%"
+    lambda: "return x * 0.1f;"
+    write_lambda: |-
+      payload.push_back((uint16_t) (x * 10.0f));
+      return x;
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    id: vmc_set_temperatura_estate_raw
+    internal: true
+    name: "VMC Set Temperatura Estate Raw"
+    address: 101
+    value_type: U_WORD
+    min_value: 0
+    max_value: 50
+    step: 0.1
+    unit_of_measurement: "°C"
+    lambda: "return x * 0.1f;"
+    write_lambda: |-
+      payload.push_back((uint16_t) (x * 10.0f));
+      return x;
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    id: vmc_set_umidita_estate_raw
+    internal: true
+    name: "VMC Set Umidita Estate Raw"
+    address: 102
+    value_type: U_WORD
+    min_value: 30
+    max_value: 90
+    step: 0.1
+    unit_of_measurement: "%"
+    lambda: "return x * 0.1f;"
+    write_lambda: |-
+      payload.push_back((uint16_t) (x * 10.0f));
+      return x;
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    id: vmc_set_min_ur_raw
+    internal: true
+    name: "VMC Set Min UR Raw"
+    address: 105
+    value_type: U_WORD
+    min_value: 30
+    max_value: 70
+    step: 0.1
+    unit_of_measurement: "%"
+    lambda: "return x * 0.1f;"
+    write_lambda: |-
+      payload.push_back((uint16_t) (x * 10.0f));
+      return x;
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    id: vmc_set_velocita_1_raw
+    internal: true
+    name: "VMC Set Velocita 1 Raw"
+    address: 119
+    value_type: U_WORD
+    min_value: 0
+    max_value: 100
+    step: 0.01
+    unit_of_measurement: "%"
+    lambda: "return x * 0.01;"
+    write_lambda: |-
+      payload.push_back((uint16_t) (x * 100.0f));
+      return x;
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    id: vmc_set_velocita_2_raw
+    internal: true
+    name: "VMC Set Velocita 2 Raw"
+    address: 120
+    value_type: U_WORD
+    min_value: 0
+    max_value: 100
+    step: 0.01
+    unit_of_measurement: "%"
+    lambda: "return x * 0.01;"
+    write_lambda: |-
+      payload.push_back((uint16_t) (x * 100.0f));
+      return x;
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    id: vmc_set_velocita_3_raw
+    internal: true
+    name: "VMC Set Velocita 3 Raw"
+    address: 121
+    value_type: U_WORD
+    min_value: 0
+    max_value: 100
+    step: 0.01
+    unit_of_measurement: "%"
+    lambda: "return x * 0.01;"
+    write_lambda: |-
+      payload.push_back((uint16_t) (x * 100.0f));
+      return x;
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    id: vmc_set_aumento_ricircolo_raw
+    internal: true
+    name: "VMC Set Aumento Ricircolo Raw"
+    address: 122
+    value_type: U_WORD
+    min_value: 10
+    max_value: 100
+    step: 0.01
+    unit_of_measurement: "%"
+    lambda: "return x * 0.01;"
+    write_lambda: |-
+      payload.push_back((uint16_t) (x * 100.0f));
+      return x;
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    id: vmc_set_pressurizzazione_raw
+    internal: true
+    name: "VMC Set Pressurizzazione Raw"
+    address: 127
+    value_type: U_WORD
+    min_value: 50
+    max_value: 200
+    step: 0.01
+    unit_of_measurement: "%"
+    lambda: "return x * 0.01;"
+    write_lambda: |-
+      payload.push_back((uint16_t) (x * 100.0f));
+      return x;
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    id: vmc_ore_allarme_filtri_raw
+    internal: true
+    name: "VMC Ore Allarme Filtri Raw"
+    address: 165
+    value_type: U_WORD
+    min_value: 0
+    max_value: 9999
+    step: 1
+    unit_of_measurement: "h"
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    id: vmc_ore_blocco_filtri_raw
+    internal: true
+    name: "VMC Ore Blocco Filtri Raw"
+    address: 166
+    value_type: U_WORD
+    min_value: 0
+    max_value: 255
+    step: 1
+    unit_of_measurement: "h"
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    id: vmc_max_temperatura_h2o_fredda_raw
+    internal: true
+    name: "VMC Max Temperatura H2O Fredda Raw"
+    address: 170
+    value_type: U_WORD
+    min_value: 10
+    max_value: 35
+    step: 0.1
+    unit_of_measurement: "°C"
+    lambda: "return x * 0.1;"
+    write_lambda: |-
+      payload.push_back((uint16_t) (x * 10.0f));
+      return x;
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    id: vmc_max_temperatura_h2o_blocco_raw
+    internal: true
+    name: "VMC Max Temperatura H2O Blocco Raw"
+    address: 172
+    value_type: U_WORD
+    min_value: 30
+    max_value: 60
+    step: 0.1
+    unit_of_measurement: "°C"
+    lambda: "return x * 0.1;"
+    write_lambda: |-
+      payload.push_back((uint16_t) (x * 10.0f));
+      return x;
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    id: vmc_config_ingresso_1_raw
+    internal: true
+    name: "VMC Config Ingresso 1 Raw"
+    address: 151
+    value_type: U_WORD
+    min_value: 0
+    max_value: 11
+    step: 1
+    mode: box
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    id: vmc_config_ingresso_2_raw
+    internal: true
+    name: "VMC Config Ingresso 2 Raw"
+    address: 152
+    value_type: U_WORD
+    min_value: 0
+    max_value: 11
+    step: 1
+    mode: box
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    id: vmc_config_ingresso_3_raw
+    internal: true
+    name: "VMC Config Ingresso 3 Raw"
+    address: 153
+    value_type: U_WORD
+    min_value: 0
+    max_value: 11
+    step: 1
+    mode: box
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    id: vmc_config_ingresso_4_raw
+    internal: true
+    name: "VMC Config Ingresso 4 Raw"
+    address: 154
+    value_type: U_WORD
+    min_value: 0
+    max_value: 11
+    step: 1
+    mode: box
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    id: vmc_config_ingresso_5_raw
+    internal: true
+    name: "VMC Config Ingresso 5 Raw"
+    address: 155
+    value_type: U_WORD
+    min_value: 0
+    max_value: 11
+    step: 1
+    mode: box
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    id: vmc_config_uscita_6_raw
+    internal: true
+    name: "VMC Config Uscita 6 Raw"
+    address: 156
+    value_type: U_WORD
+    min_value: 0
+    max_value: 6
+    step: 1
+    mode: box
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    id: vmc_config_uscita_7_raw
+    internal: true
+    name: "VMC Config Uscita 7 Raw"
+    address: 157
+    value_type: U_WORD
+    min_value: 0
+    max_value: 6
+    step: 1
+    mode: box
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    id: vmc_priorita_vel_off_raw
+    internal: true
+    name: "VMC Priorita Vel OFF Raw"
+    address: 158
+    value_type: U_WORD
+    min_value: 0
+    max_value: 1
+    step: 1
+    mode: box
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    id: vmc_modbus_address_raw
+    internal: true
+    name: "VMC Modbus Address Raw"
+    address: 183
+    value_type: U_WORD
+    min_value: 1
+    max_value: 247
+    step: 1
+    mode: box
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    id: vmc_modbus_baudrate_raw_value
+    internal: true
+    name: "VMC Modbus Baudrate Raw Value"
+    address: 184
+    value_type: U_WORD
+    min_value: 0
+    max_value: 7
+    step: 1
+    mode: box
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    id: vmc_modbus_parity_raw_value
+    internal: true
+    name: "VMC Modbus Parity Raw Value"
+    address: 185
+    value_type: U_WORD
+    min_value: 0
+    max_value: 2
+    step: 1
+    mode: box
+
+  - platform: modbus_controller
+    modbus_controller_id: vmc_ctrl
+    id: vmc_modbus_stop_bits_raw_value
+    internal: true
+    name: "VMC Modbus Stop Bits Raw Value"
+    address: 186
+    value_type: U_WORD
+    min_value: 0
+    max_value: 1
+    step: 1
+    mode: box
+
+  - platform: template
+    name: "VMC Set Temperatura Inverno"
+    min_value: 0
+    max_value: 50
+    step: 1
+    unit_of_measurement: "°C"
+    mode: box
+    lambda: |-
+      return roundf(id(vmc_set_temperatura_inverno_raw).state);
+    update_interval: 10s
+    set_action:
+      - lambda: |-
+          auto pwd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 187, 27);
+          id(vmc_ctrl)->queue_command(pwd);
+          auto cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 99, (uint16_t) (roundf(x) * 10.0f));
+          id(vmc_ctrl)->queue_command(cmd);
+
+  - platform: template
+    name: "VMC Set Umidita Inverno"
+    min_value: 30
+    max_value: 90
+    step: 1
+    unit_of_measurement: "%"
+    mode: box
+    lambda: |-
+      return roundf(id(vmc_set_umidita_inverno_raw).state);
+    update_interval: 10s
+    set_action:
+      - lambda: |-
+          float target = roundf(x);
+          const float min_ur = roundf(id(vmc_set_min_ur_raw).state);
+          if (!isnan(min_ur) && target < min_ur) target = min_ur;
+          auto pwd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 187, 27);
+          id(vmc_ctrl)->queue_command(pwd);
+          auto cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 100, (uint16_t) (target * 10.0f));
+          id(vmc_ctrl)->queue_command(cmd);
+
+  - platform: template
+    name: "VMC Set Temperatura Estate"
+    min_value: 0
+    max_value: 50
+    step: 1
+    unit_of_measurement: "°C"
+    mode: box
+    lambda: |-
+      return roundf(id(vmc_set_temperatura_estate_raw).state);
+    update_interval: 10s
+    set_action:
+      - lambda: |-
+          auto pwd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 187, 27);
+          id(vmc_ctrl)->queue_command(pwd);
+          auto cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 101, (uint16_t) (roundf(x) * 10.0f));
+          id(vmc_ctrl)->queue_command(cmd);
+
+  - platform: template
+    name: "VMC Set Umidita Estate"
+    min_value: 30
+    max_value: 90
+    step: 1
+    unit_of_measurement: "%"
+    mode: box
+    lambda: |-
+      return roundf(id(vmc_set_umidita_estate_raw).state);
+    update_interval: 10s
+    set_action:
+      - lambda: |-
+          float target = roundf(x);
+          const float min_ur = roundf(id(vmc_set_min_ur_raw).state);
+          if (!isnan(min_ur) && target < min_ur) target = min_ur;
+          auto pwd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 187, 27);
+          id(vmc_ctrl)->queue_command(pwd);
+          auto cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 102, (uint16_t) (target * 10.0f));
+          id(vmc_ctrl)->queue_command(cmd);
+
+  - platform: template
+    name: "VMC Set Min UR"
+    min_value: 30
+    max_value: 70
+    step: 1
+    unit_of_measurement: "%"
+    mode: box
+    lambda: |-
+      return roundf(id(vmc_set_min_ur_raw).state);
+    update_interval: 10s
+    set_action:
+      - lambda: |-
+          auto pwd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 187, 27);
+          id(vmc_ctrl)->queue_command(pwd);
+          auto cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 105, (uint16_t) (roundf(x) * 10.0f));
+          id(vmc_ctrl)->queue_command(cmd);
+
+  - platform: template
+    name: "VMC Set Velocita 1"
+    min_value: 0
+    max_value: 100
+    step: 1
+    unit_of_measurement: "%"
+    mode: box
+    lambda: |-
+      return roundf(id(vmc_set_velocita_1_raw).state);
+    update_interval: 10s
+    set_action:
+      - lambda: |-
+          auto pwd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 187, 27);
+          id(vmc_ctrl)->queue_command(pwd);
+          auto cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 119, (uint16_t) (roundf(x) * 100.0f));
+          id(vmc_ctrl)->queue_command(cmd);
+
+  - platform: template
+    name: "VMC Set Velocita 2"
+    min_value: 0
+    max_value: 100
+    step: 1
+    unit_of_measurement: "%"
+    mode: box
+    lambda: |-
+      return roundf(id(vmc_set_velocita_2_raw).state);
+    update_interval: 10s
+    set_action:
+      - lambda: |-
+          auto pwd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 187, 27);
+          id(vmc_ctrl)->queue_command(pwd);
+          auto cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 120, (uint16_t) (roundf(x) * 100.0f));
+          id(vmc_ctrl)->queue_command(cmd);
+
+  - platform: template
+    name: "VMC Set Velocita 3"
+    min_value: 0
+    max_value: 100
+    step: 1
+    unit_of_measurement: "%"
+    mode: box
+    lambda: |-
+      return roundf(id(vmc_set_velocita_3_raw).state);
+    update_interval: 10s
+    set_action:
+      - lambda: |-
+          auto pwd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 187, 27);
+          id(vmc_ctrl)->queue_command(pwd);
+          auto cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 121, (uint16_t) (roundf(x) * 100.0f));
+          id(vmc_ctrl)->queue_command(cmd);
+
+  - platform: template
+    name: "VMC Set Aumento Ricircolo"
+    min_value: 10
+    max_value: 100
+    step: 1
+    unit_of_measurement: "%"
+    mode: box
+    lambda: |-
+      return roundf(id(vmc_set_aumento_ricircolo_raw).state);
+    update_interval: 10s
+    set_action:
+      - lambda: |-
+          auto pwd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 187, 27);
+          id(vmc_ctrl)->queue_command(pwd);
+          auto cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 122, (uint16_t) (roundf(x) * 100.0f));
+          id(vmc_ctrl)->queue_command(cmd);
+
+  - platform: template
+    name: "VMC Set Pressurizzazione"
+    min_value: 50
+    max_value: 200
+    step: 1
+    unit_of_measurement: "%"
+    mode: box
+    lambda: |-
+      return roundf(id(vmc_set_pressurizzazione_raw).state);
+    update_interval: 10s
+    set_action:
+      - lambda: |-
+          auto pwd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 187, 27);
+          id(vmc_ctrl)->queue_command(pwd);
+          auto cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 127, (uint16_t) (roundf(x) * 100.0f));
+          id(vmc_ctrl)->queue_command(cmd);
+
+  - platform: template
+    name: "VMC Ore Allarme Filtri"
+    min_value: 0
+    max_value: 9999
+    step: 1
+    unit_of_measurement: "h"
+    mode: box
+    lambda: |-
+      return id(vmc_ore_allarme_filtri_raw).state;
+    update_interval: 10s
+    set_action:
+      - lambda: |-
+          auto pwd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 187, 27);
+          id(vmc_ctrl)->queue_command(pwd);
+          auto cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 165, (uint16_t) x);
+          id(vmc_ctrl)->queue_command(cmd);
+
+  - platform: template
+    name: "VMC Ore Blocco Filtri"
+    min_value: 0
+    max_value: 255
+    step: 1
+    unit_of_measurement: "h"
+    mode: box
+    lambda: |-
+      return id(vmc_ore_blocco_filtri_raw).state;
+    update_interval: 10s
+    set_action:
+      - lambda: |-
+          auto pwd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 187, 27);
+          id(vmc_ctrl)->queue_command(pwd);
+          auto cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 166, (uint16_t) x);
+          id(vmc_ctrl)->queue_command(cmd);
+
+  - platform: template
+    name: "VMC Max Temperatura H2O Fredda"
+    min_value: 10
+    max_value: 35
+    step: 1
+    unit_of_measurement: "°C"
+    mode: box
+    lambda: |-
+      return roundf(id(vmc_max_temperatura_h2o_fredda_raw).state);
+    update_interval: 10s
+    set_action:
+      - lambda: |-
+          auto pwd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 187, 27);
+          id(vmc_ctrl)->queue_command(pwd);
+          auto cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 170, (uint16_t) (roundf(x) * 10.0f));
+          id(vmc_ctrl)->queue_command(cmd);
+
+  - platform: template
+    name: "VMC Max Temperatura H2O Blocco"
+    min_value: 30
+    max_value: 60
+    step: 1
+    unit_of_measurement: "°C"
+    mode: box
+    lambda: |-
+      return roundf(id(vmc_max_temperatura_h2o_blocco_raw).state);
+    update_interval: 10s
+    set_action:
+      - lambda: |-
+          auto pwd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 187, 27);
+          id(vmc_ctrl)->queue_command(pwd);
+          auto cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 172, (uint16_t) (roundf(x) * 10.0f));
+          id(vmc_ctrl)->queue_command(cmd);
+
+  - platform: template
+    name: "VMC Config Ingresso 1"
+    min_value: 0
+    max_value: 11
+    step: 1
+    mode: box
+    lambda: |-
+      return id(vmc_config_ingresso_1_raw).state;
+    update_interval: 10s
+    set_action:
+      - lambda: |-
+          auto pwd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 187, 27);
+          id(vmc_ctrl)->queue_command(pwd);
+          auto cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 151, (uint16_t) x);
+          id(vmc_ctrl)->queue_command(cmd);
+
+  - platform: template
+    name: "VMC Config Ingresso 2"
+    min_value: 0
+    max_value: 11
+    step: 1
+    mode: box
+    lambda: |-
+      return id(vmc_config_ingresso_2_raw).state;
+    update_interval: 10s
+    set_action:
+      - lambda: |-
+          auto pwd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 187, 27);
+          id(vmc_ctrl)->queue_command(pwd);
+          auto cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 152, (uint16_t) x);
+          id(vmc_ctrl)->queue_command(cmd);
+
+  - platform: template
+    name: "VMC Config Ingresso 3"
+    min_value: 0
+    max_value: 11
+    step: 1
+    mode: box
+    lambda: |-
+      return id(vmc_config_ingresso_3_raw).state;
+    update_interval: 10s
+    set_action:
+      - lambda: |-
+          auto pwd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 187, 27);
+          id(vmc_ctrl)->queue_command(pwd);
+          auto cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 153, (uint16_t) x);
+          id(vmc_ctrl)->queue_command(cmd);
+
+  - platform: template
+    name: "VMC Config Ingresso 4"
+    min_value: 0
+    max_value: 11
+    step: 1
+    mode: box
+    lambda: |-
+      return id(vmc_config_ingresso_4_raw).state;
+    update_interval: 10s
+    set_action:
+      - lambda: |-
+          auto pwd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 187, 27);
+          id(vmc_ctrl)->queue_command(pwd);
+          auto cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 154, (uint16_t) x);
+          id(vmc_ctrl)->queue_command(cmd);
+
+  - platform: template
+    name: "VMC Config Ingresso 5"
+    min_value: 0
+    max_value: 11
+    step: 1
+    mode: box
+    lambda: |-
+      return id(vmc_config_ingresso_5_raw).state;
+    update_interval: 10s
+    set_action:
+      - lambda: |-
+          auto pwd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 187, 27);
+          id(vmc_ctrl)->queue_command(pwd);
+          auto cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 155, (uint16_t) x);
+          id(vmc_ctrl)->queue_command(cmd);
+
+  - platform: template
+    name: "VMC Config Uscita 6"
+    min_value: 0
+    max_value: 6
+    step: 1
+    mode: box
+    lambda: |-
+      return id(vmc_config_uscita_6_raw).state;
+    update_interval: 10s
+    set_action:
+      - lambda: |-
+          auto pwd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 187, 27);
+          id(vmc_ctrl)->queue_command(pwd);
+          auto cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 156, (uint16_t) x);
+          id(vmc_ctrl)->queue_command(cmd);
+
+  - platform: template
+    name: "VMC Config Uscita 7"
+    min_value: 0
+    max_value: 6
+    step: 1
+    mode: box
+    lambda: |-
+      return id(vmc_config_uscita_7_raw).state;
+    update_interval: 10s
+    set_action:
+      - lambda: |-
+          auto pwd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 187, 27);
+          id(vmc_ctrl)->queue_command(pwd);
+          auto cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 157, (uint16_t) x);
+          id(vmc_ctrl)->queue_command(cmd);
+
+  - platform: template
+    name: "VMC Priorita Vel OFF"
+    min_value: 0
+    max_value: 1
+    step: 1
+    mode: box
+    lambda: |-
+      return id(vmc_priorita_vel_off_raw).state;
+    update_interval: 10s
+    set_action:
+      - lambda: |-
+          auto pwd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 187, 27);
+          id(vmc_ctrl)->queue_command(pwd);
+          auto cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 158, (uint16_t) x);
+          id(vmc_ctrl)->queue_command(cmd);
+
+  - platform: template
+    name: "VMC Modbus Address"
+    min_value: 1
+    max_value: 247
+    step: 1
+    mode: box
+    lambda: |-
+      return id(vmc_modbus_address_raw).state;
+    update_interval: 10s
+    set_action:
+      - lambda: |-
+          auto pwd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 187, 27);
+          id(vmc_ctrl)->queue_command(pwd);
+          auto cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 183, (uint16_t) x);
+          id(vmc_ctrl)->queue_command(cmd);
+
+  - platform: template
+    name: "VMC Modbus Baudrate Raw"
+    min_value: 0
+    max_value: 7
+    step: 1
+    mode: box
+    lambda: |-
+      return id(vmc_modbus_baudrate_raw_value).state;
+    update_interval: 10s
+    set_action:
+      - lambda: |-
+          auto pwd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 187, 27);
+          id(vmc_ctrl)->queue_command(pwd);
+          auto cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 184, (uint16_t) x);
+          id(vmc_ctrl)->queue_command(cmd);
+
+  - platform: template
+    name: "VMC Modbus Parity Raw"
+    min_value: 0
+    max_value: 2
+    step: 1
+    mode: box
+    lambda: |-
+      return id(vmc_modbus_parity_raw_value).state;
+    update_interval: 10s
+    set_action:
+      - lambda: |-
+          auto pwd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 187, 27);
+          id(vmc_ctrl)->queue_command(pwd);
+          auto cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 185, (uint16_t) x);
+          id(vmc_ctrl)->queue_command(cmd);
+
+  - platform: template
+    name: "VMC Modbus Stop Bits Raw"
+    min_value: 0
+    max_value: 1
+    step: 1
+    mode: box
+    lambda: |-
+      return id(vmc_modbus_stop_bits_raw_value).state;
+    update_interval: 10s
+    set_action:
+      - lambda: |-
+          auto pwd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 187, 27);
+          id(vmc_ctrl)->queue_command(pwd);
+          auto cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 186, (uint16_t) x);
+          id(vmc_ctrl)->queue_command(cmd);
+
+button:
+  - platform: template
+    name: "VMC Reset Allarmi"
+    on_press:
+      - lambda: |-
+          auto cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 11, 1);
+          id(vmc_ctrl)->queue_command(cmd);
+
+  - platform: template
+    name: "VMC Reset Filtri"
+    on_press:
+      - lambda: |-
+          auto cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 24, 1);
+          id(vmc_ctrl)->queue_command(cmd);
+
+  - platform: template
+    name: "VMC Carica Ultimo Evento"
+    on_press:
+      - lambda: |-
+          auto cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 17, 1);
+          id(vmc_ctrl)->queue_command(cmd);
+
+  - platform: template
+    name: "VMC Evento Precedente"
+    on_press:
+      - lambda: |-
+          auto cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 18, 1);
+          id(vmc_ctrl)->queue_command(cmd);
+
+  - platform: template
+    name: "VMC Evento Successivo"
+    on_press:
+      - lambda: |-
+          auto cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(id(vmc_ctrl), 19, 1);
+          id(vmc_ctrl)->queue_command(cmd);

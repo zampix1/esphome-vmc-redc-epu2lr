@@ -1,52 +1,84 @@
-# ESPHome VMC RED C / EVCO EPU2LR
+# ESPHome VMC RED C / LET-C / EVCO EPU2LR
 
-Unofficial ESPHome package and example configuration for VMC units based on:
+Unofficial ESPHome packages and example configurations for VMC units based on the EVCO `EPU2LR` / `c-pro 3 kilo` family.
 
-- EVCO `EPU2LR` / `c-pro 3 kilo`
-- EPJ-Graph wall panel
-- Modbus RTU `19200 / N / 2`, slave address `1`
+This repository now contains **two explicit Modbus variants**:
 
-This repository packages the work into a reusable GitHub-hosted ESPHome package, so it can be imported from ESPHome directly and reused by others.
+- **RED C r9 / EPJ-Graph**
+- **LET-C**
+
+They share a lot of logic, but **the upper Modbus register map is not identical**. Do not assume one package fits both.
+
+## Variants
+
+| Variant | Package | Status | Notes |
+|---|---|---|---|
+| RED C r9 / EPJ-Graph | `packages/vmc_redc_r9_epjgraph.yaml` | Field-tested | Built from your working gateway and cross-checked against the RED C r9 manual. |
+| LET-C | `packages/vmc_let_c.yaml` | Document-derived | Mapped against the LET-C manual. Not field-tested on a real LET-C unit. |
+| Legacy compatibility path | `packages/vmc_redc_epu2lr.yaml` | Compatibility | Preserved for older import URLs; use the explicit RED C r9 package for new setups. |
 
 ## What is included
 
+- `packages/vmc_redc_r9_epjgraph.yaml`  
+  Canonical RED C r9 / EPJ-Graph package.
+- `packages/vmc_let_c.yaml`  
+  LET-C package with its own upper register map.
 - `packages/vmc_redc_epu2lr.yaml`  
-  Main ESPHome package with Modbus controller, sensors, selects, buttons and authenticated writes for protected parameters.
+  Backward-compatible package path kept for existing imports.
+- `devices/vmc-gateway-esp32s3-redc-r9.yaml`  
+  Full importable example for RED C r9 / EPJ-Graph.
+- `devices/vmc-gateway-esp32s3-let-c.yaml`  
+  Full importable example for LET-C.
 - `devices/vmc-gateway-esp32s3.yaml`  
-  Example full configuration for an ESP32-S3 RS485 gateway.
+  Legacy RED C example path retained for compatibility.
 - `home-assistant/vmc-dashboard.yaml`  
-  Lovelace dashboard for Home Assistant.
+  Dashboard originally built around the RED C r9 variant.
+- `home-assistant/vmc-dashboard-redc-r9.yaml`  
+  Explicitly named copy of the same dashboard.
 - `tools/Export-VmcParameters.ps1`  
   PowerShell export tool for Home Assistant entity snapshots.
 - `docs/`  
-  Notes about the RED C application logic and EVCO hardware family.
+  Notes about the RED C application logic, EVCO hardware family and addressing caveats.
 
 ## Hardware assumptions
 
-The default example is built around an ESP32-S3 RS485 board with:
+The example gateway is built around an ESP32-S3 RS485 board with:
 
 - `GPIO17` = RS485 TX
 - `GPIO18` = RS485 RX
 - `GPIO21` = RS485 DE/RE
 
-Adjust these substitutions if your board differs.
+Adjust substitutions if your board differs.
 
 ## Quick start
 
-### Option 1: import the full example
+### RED C r9 / EPJ-Graph
 
-Use the example device YAML:
+Full example:
 
 ```yaml
 packages:
-  vmc: github://zampix1/esphome-vmc-redc-epu2lr/packages/vmc_redc_epu2lr.yaml@main
+  vmc: github://zampix1/esphome-vmc-redc-epu2lr/packages/vmc_redc_r9_epjgraph.yaml@main
 ```
 
-Or start from:
+Importable device:
 
-`devices/vmc-gateway-esp32s3.yaml`
+`devices/vmc-gateway-esp32s3-redc-r9.yaml`
 
-### Option 2: include the package in your own ESPHome node
+### LET-C
+
+Full example:
+
+```yaml
+packages:
+  vmc: github://zampix1/esphome-vmc-redc-epu2lr/packages/vmc_let_c.yaml@main
+```
+
+Importable device:
+
+`devices/vmc-gateway-esp32s3-let-c.yaml`
+
+## Common custom node skeleton
 
 ```yaml
 substitutions:
@@ -82,22 +114,26 @@ web_server:
   version: 3
 
 packages:
-  vmc: github://zampix1/esphome-vmc-redc-epu2lr/packages/vmc_redc_epu2lr.yaml@main
+  vmc: github://zampix1/esphome-vmc-redc-epu2lr/packages/vmc_redc_r9_epjgraph.yaml@main
 ```
+
+Swap the package path for `vmc_let_c.yaml` if you are targeting LET-C.
 
 ## Notes
 
-- The package intentionally uses authenticated back-to-back Modbus writes for protected installer parameters.
+- Protected installer parameters are written with authenticated back-to-back Modbus writes.
 - Invalid CAN temperature/humidity sensors are hidden internally.
 - Temperature and percentage sensors include sanity filters to avoid sentinel spikes.
-- Register addresses in this project are `Base 0`. In the RED C PDF, OCR/text extraction often shows the hexadecimal address (`Base 0`) together with the decimal `Base 1` column, which can look like an off-by-one error if read too quickly.
-- This is not an official EVCO or RED C project.
+- Register addresses in this project are **Base 0**.
+- In the RED C and LET-C PDFs, OCR/text extraction often shows the hexadecimal address (`Base 0`) together with the decimal `Base 1` column. Read the hexadecimal address if you want the value used by these packages.
+- The included dashboard was built around the RED C r9 variant. It should mostly work on LET-C for common entities, but it is not yet curated specifically for LET-C-only parameters.
+- This is not an official EVCO, VMC Italia or RED C project.
 
 ## Home Assistant
 
 If you want the dashboard:
 
-1. Copy `home-assistant/vmc-dashboard.yaml` into your HA dashboards folder.
+1. Copy `home-assistant/vmc-dashboard.yaml` or `home-assistant/vmc-dashboard-redc-r9.yaml` into your HA dashboards folder.
 2. Add the dashboard entry to `configuration.yaml`.
 3. Ensure `button-card` is installed if you want the custom button cards used by the dashboard.
 

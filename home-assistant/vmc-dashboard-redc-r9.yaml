@@ -1,0 +1,558 @@
+title: VMC
+views:
+  - title: VMC
+    path: vmc
+    icon: mdi:air-filter
+    cards:
+      - type: conditional
+        conditions:
+          - entity: binary_sensor.vmc_gateway_vmc_online
+            state: "off"
+        card:
+          type: markdown
+          content: |
+            ## VMC Offline
+
+      - type: conditional
+        conditions:
+          - entity: binary_sensor.vmc_gateway_vmc_allarme_attivo
+            state: "on"
+        card:
+          type: markdown
+          content: |
+            ## Allarme VMC attivo
+            Controlla codice ed evento nei riquadri sotto.
+
+      - type: glance
+        title: Stato rapido
+        columns: 4
+        entities:
+          - entity: binary_sensor.vmc_gateway_vmc_online
+            name: Online
+            icon: mdi:lan-connect
+          - entity: binary_sensor.vmc_gateway_vmc_allarme_attivo
+            name: Allarme
+            icon: mdi:alert-circle
+          - entity: sensor.vmc_gateway_vmc_current_speed
+            name: Velocita
+            icon: mdi:fan
+          - entity: sensor.vmc_gateway_vmc_modalita_attiva_testo
+            name: Modalita
+            icon: mdi:air-filter
+
+      - type: grid
+        title: Gauge rapidi
+        columns: 3
+        square: false
+        cards:
+          - type: gauge
+            entity: sensor.vmc_gateway_vmc_temperatura_display
+            name: Temp Display
+            min: 10
+            max: 35
+            unit: "°C"
+          - type: gauge
+            entity: sensor.vmc_gateway_vmc_umidita_display_filtrata
+            name: Umidita
+            min: 20
+            max: 90
+            unit: "%"
+          - type: gauge
+            entity: sensor.vmc_gateway_vmc_temperatura_ripresa
+            name: Ripresa
+            min: 10
+            max: 35
+            unit: "°C"
+          - type: gauge
+            entity: sensor.vmc_gateway_vmc_temperatura_condensatore
+            name: Condensatore
+            min: 0
+            max: 60
+            unit: "°C"
+          - type: gauge
+            entity: sensor.vmc_gateway_vmc_temperatura_evaporatore
+            name: Evaporatore
+            min: 0
+            max: 60
+            unit: "°C"
+          - type: gauge
+            entity: sensor.vmc_gateway_vmc_temperatura_h2o_in
+            name: H2O IN
+            min: 0
+            max: 60
+            unit: "°C"
+
+      - type: grid
+        title: Velocita
+        columns: 3
+        square: false
+        cards:
+          - type: custom:button-card
+            entity: select.vmc_gateway_vmc_speed
+            name: "OFF"
+            icon: mdi:power
+            show_state: true
+            tap_action:
+              action: call-service
+              service: select.select_option
+              target:
+                entity_id: select.vmc_gateway_vmc_speed
+              data:
+                option: "Off"
+          - type: custom:button-card
+            entity: select.vmc_gateway_vmc_speed
+            name: Vel 1
+            icon: mdi:fan-speed-1
+            show_state: true
+            tap_action:
+              action: call-service
+              service: select.select_option
+              target:
+                entity_id: select.vmc_gateway_vmc_speed
+              data:
+                option: Velocita1
+          - type: custom:button-card
+            entity: select.vmc_gateway_vmc_speed
+            name: Vel 2
+            icon: mdi:fan-speed-2
+            show_state: true
+            tap_action:
+              action: call-service
+              service: select.select_option
+              target:
+                entity_id: select.vmc_gateway_vmc_speed
+              data:
+                option: Velocita2
+          - type: custom:button-card
+            entity: select.vmc_gateway_vmc_speed
+            name: Vel 3
+            icon: mdi:fan-speed-3
+            show_state: true
+            tap_action:
+              action: call-service
+              service: select.select_option
+              target:
+                entity_id: select.vmc_gateway_vmc_speed
+              data:
+                option: Velocita3
+          - type: custom:button-card
+            entity: select.vmc_gateway_vmc_speed
+            name: Auto 1
+            icon: mdi:fan-auto
+            show_state: true
+            tap_action:
+              action: call-service
+              service: select.select_option
+              target:
+                entity_id: select.vmc_gateway_vmc_speed
+              data:
+                option: Velocita auto1
+          - type: custom:button-card
+            entity: select.vmc_gateway_vmc_speed
+            name: Auto 2
+            icon: mdi:fan-auto
+            show_state: true
+            tap_action:
+              action: call-service
+              service: select.select_option
+              target:
+                entity_id: select.vmc_gateway_vmc_speed
+              data:
+                option: Velocita auto2
+
+      - type: grid
+        title: Funzioni
+        columns: 3
+        square: false
+        cards:
+          - type: custom:button-card
+            entity: select.vmc_gateway_vmc_ventilation_mode
+            name: Ventilazione
+            icon: mdi:air-filter
+            show_state: true
+          - type: custom:button-card
+            entity: select.vmc_gateway_vmc_dehumidification_mode
+            name: Deumidifica
+            icon: mdi:water-percent
+            show_state: true
+          - type: custom:button-card
+            entity: select.vmc_gateway_vmc_integration_mode
+            name: Integrazione
+            icon: mdi:radiator
+            show_state: true
+          - type: custom:button-card
+            entity: select.vmc_gateway_vmc_recirculation_mode
+            name: Ricircolo
+            icon: mdi:autorenew
+            show_state: true
+          - type: custom:button-card
+            entity: select.vmc_gateway_vmc_season
+            name: Stagione
+            icon: mdi:sun-snowflake
+            show_state: true
+          - type: custom:button-card
+            entity: select.vmc_gateway_vmc_fasce_orarie
+            name: Fasce orarie
+            icon: mdi:calendar-clock
+            show_state: true
+
+      - type: entities
+        title: Comandi completi
+        entities:
+          - select.vmc_gateway_vmc_speed
+          - select.vmc_gateway_vmc_ventilation_mode
+          - select.vmc_gateway_vmc_dehumidification_mode
+          - select.vmc_gateway_vmc_integration_mode
+          - select.vmc_gateway_vmc_recirculation_mode
+          - select.vmc_gateway_vmc_season_control_mode
+          - select.vmc_gateway_vmc_season
+          - select.vmc_gateway_vmc_fasce_orarie
+
+      - type: entities
+        title: Temperature VMC
+        entities:
+          - sensor.vmc_gateway_vmc_temperatura_immissione
+          - sensor.vmc_gateway_vmc_temperatura_rinnovo
+          - sensor.vmc_gateway_vmc_temperatura_ripresa
+          - sensor.vmc_gateway_vmc_temperatura_h2o_in
+          - sensor.vmc_gateway_vmc_temperatura_condensatore
+          - sensor.vmc_gateway_vmc_temperatura_evaporatore
+          - sensor.vmc_gateway_vmc_temperatura_display
+
+      - type: entities
+        title: Umidita VMC
+        entities:
+          - sensor.vmc_gateway_vmc_umidita_display_filtrata
+
+      - type: grid
+        title: Ventilatori e valvole
+        columns: 3
+        square: false
+        cards:
+          - type: gauge
+            entity: sensor.vmc_gateway_vmc_velocita_ventilatore_immissione
+            name: Immissione
+            min: 0
+            max: 100
+            unit: "%"
+          - type: gauge
+            entity: sensor.vmc_gateway_vmc_velocita_ventilatore_espulsione
+            name: Espulsione
+            min: 0
+            max: 100
+            unit: "%"
+          - type: gauge
+            entity: sensor.vmc_gateway_vmc_apertura_valvola_h2o_in
+            name: Valvola H2O
+            min: 0
+            max: 100
+            unit: "%"
+
+      - type: entities
+        title: Stati macchina
+        entities:
+          - sensor.vmc_gateway_vmc_apertura_valvola_h2o_in
+          - sensor.vmc_gateway_vmc_velocita_ventilatore_espulsione
+          - sensor.vmc_gateway_vmc_velocita_ventilatore_immissione
+          - type: divider
+          - sensor.vmc_gateway_vmc_stato_accensione_compressore
+          - sensor.vmc_gateway_vmc_stato_alimentazione_ventilatori
+          - sensor.vmc_gateway_vmc_stato_apertura_bypass
+          - sensor.vmc_gateway_vmc_stato_apertura_ricircolo
+          - sensor.vmc_gateway_vmc_stato_apertura_valvola_scambiatore
+
+      - type: entities
+        title: Stati booleani
+        entities:
+          - binary_sensor.vmc_gateway_vmc_compressore_attivo
+          - binary_sensor.vmc_gateway_vmc_alimentazione_ventilatori
+          - binary_sensor.vmc_gateway_vmc_bypass_aperto
+          - binary_sensor.vmc_gateway_vmc_ricircolo_aperto
+          - binary_sensor.vmc_gateway_vmc_valvola_scambiatore_aperta
+          - binary_sensor.vmc_gateway_vmc_ingresso_1
+          - binary_sensor.vmc_gateway_vmc_ingresso_2
+          - binary_sensor.vmc_gateway_vmc_ingresso_3
+          - binary_sensor.vmc_gateway_vmc_ingresso_4
+          - binary_sensor.vmc_gateway_vmc_ingresso_5
+
+      - type: markdown
+        content: |
+          ### Modifiche sensibili
+          I parametri sotto richiedono una conferma prima di aprire il popup di modifica.
+
+      - type: grid
+        title: Setpoint principali
+        columns: 2
+        square: false
+        cards:
+          - type: custom:button-card
+            entity: number.vmc_gateway_vmc_set_temperatura_inverno
+            name: Temp inverno
+            icon: mdi:thermometer
+            show_state: true
+            tap_action:
+              action: more-info
+              confirmation:
+                text: Aprire la modifica di Set temperatura inverno?
+          - type: custom:button-card
+            entity: number.vmc_gateway_vmc_set_umidita_inverno
+            name: Umidita inverno
+            icon: mdi:water-percent
+            show_state: true
+            tap_action:
+              action: more-info
+              confirmation:
+                text: Aprire la modifica di Set umidita inverno?
+          - type: custom:button-card
+            entity: number.vmc_gateway_vmc_set_temperatura_estate
+            name: Temp estate
+            icon: mdi:thermometer
+            show_state: true
+            tap_action:
+              action: more-info
+              confirmation:
+                text: Aprire la modifica di Set temperatura estate?
+          - type: custom:button-card
+            entity: number.vmc_gateway_vmc_set_umidita_estate
+            name: Umidita estate
+            icon: mdi:water-percent
+            show_state: true
+            tap_action:
+              action: more-info
+              confirmation:
+                text: Aprire la modifica di Set umidita estate?
+          - type: custom:button-card
+            entity: number.vmc_gateway_vmc_set_velocita_1
+            name: Set Vel 1
+            icon: mdi:fan-speed-1
+            show_state: true
+            tap_action:
+              action: more-info
+              confirmation:
+                text: Aprire la modifica di Set Velocita 1?
+          - type: custom:button-card
+            entity: number.vmc_gateway_vmc_set_velocita_2
+            name: Set Vel 2
+            icon: mdi:fan-speed-2
+            show_state: true
+            tap_action:
+              action: more-info
+              confirmation:
+                text: Aprire la modifica di Set Velocita 2?
+          - type: custom:button-card
+            entity: number.vmc_gateway_vmc_set_velocita_3
+            name: Set Vel 3
+            icon: mdi:fan-speed-3
+            show_state: true
+            tap_action:
+              action: more-info
+              confirmation:
+                text: Aprire la modifica di Set Velocita 3?
+          - type: custom:button-card
+            entity: number.vmc_gateway_vmc_set_aumento_ricircolo
+            name: Aumento ricircolo
+            icon: mdi:autorenew
+            show_state: true
+            tap_action:
+              action: more-info
+              confirmation:
+                text: Aprire la modifica di Set aumento ricircolo?
+          - type: custom:button-card
+            entity: number.vmc_gateway_vmc_set_pressurizzazione
+            name: Pressurizzazione
+            icon: mdi:gauge
+            show_state: true
+            tap_action:
+              action: more-info
+              confirmation:
+                text: Aprire la modifica di Set pressurizzazione?
+
+      - type: grid
+        title: Parametri avanzati
+        columns: 2
+        square: false
+        cards:
+          - type: custom:button-card
+            entity: select.vmc_gateway_vmc_dehumidification_compressor
+            name: Compressore deum.
+            icon: mdi:snowflake-thermometer
+            show_state: true
+            tap_action:
+              action: more-info
+              confirmation:
+                text: Aprire la modifica del compressore deumidificazione?
+          - type: custom:button-card
+            entity: select.vmc_gateway_vmc_integration_season_enable
+            name: Integrazione stagione
+            icon: mdi:radiator
+            show_state: true
+            tap_action:
+              action: more-info
+              confirmation:
+                text: Aprire la modifica di integrazione stagione?
+          - type: custom:button-card
+            entity: select.vmc_gateway_vmc_bypass_function
+            name: Funzione bypass
+            icon: mdi:swap-horizontal
+            show_state: true
+            tap_action:
+              action: more-info
+              confirmation:
+                text: Aprire la modifica della funzione bypass?
+          - type: custom:button-card
+            entity: number.vmc_gateway_vmc_ore_allarme_filtri
+            name: Ore allarme filtri
+            icon: mdi:air-filter
+            show_state: true
+            tap_action:
+              action: more-info
+              confirmation:
+                text: Aprire la modifica di Ore allarme filtri?
+          - type: custom:button-card
+            entity: number.vmc_gateway_vmc_ore_blocco_filtri
+            name: Ore blocco filtri
+            icon: mdi:filter-remove
+            show_state: true
+            tap_action:
+              action: more-info
+              confirmation:
+                text: Aprire la modifica di Ore blocco filtri?
+          - type: custom:button-card
+            entity: number.vmc_gateway_vmc_max_temperatura_h2o_fredda
+            name: Max H2O fredda
+            icon: mdi:thermometer-low
+            show_state: true
+            tap_action:
+              action: more-info
+              confirmation:
+                text: Aprire la modifica di Max temperatura H2O fredda?
+          - type: custom:button-card
+            entity: number.vmc_gateway_vmc_max_temperatura_h2o_blocco
+            name: Max H2O blocco
+            icon: mdi:thermometer-alert
+            show_state: true
+            tap_action:
+              action: more-info
+              confirmation:
+                text: Aprire la modifica di Max temperatura H2O blocco?
+          - type: custom:button-card
+            entity: number.vmc_gateway_vmc_set_min_ur
+            name: Set min UR
+            icon: mdi:water-minus
+            show_state: true
+            tap_action:
+              action: more-info
+              confirmation:
+                text: Aprire la modifica di Set minima umidita?
+
+      - type: entities
+        title: Eventi e manutenzione
+        entities:
+          - sensor.vmc_gateway_vmc_evento_testo
+          - sensor.vmc_gateway_vmc_codice_evento
+          - sensor.vmc_gateway_vmc_numero_evento
+          - sensor.vmc_gateway_vmc_ora_evento_raw
+          - sensor.vmc_gateway_vmc_contaore_filtri
+          - sensor.vmc_gateway_vmc_contaore_totali
+
+      - type: grid
+        title: Reset e storico eventi
+        columns: 3
+        square: false
+        cards:
+          - type: custom:button-card
+            entity: button.vmc_gateway_vmc_reset_allarmi
+            name: Reset Allarmi
+            icon: mdi:bell-off
+            tap_action:
+              action: call-service
+              service: button.press
+              target:
+                entity_id: button.vmc_gateway_vmc_reset_allarmi
+              confirmation:
+                text: Confermi reset allarmi VMC?
+          - type: custom:button-card
+            entity: button.vmc_gateway_vmc_reset_filtri
+            name: Reset Filtri
+            icon: mdi:filter-remove
+            tap_action:
+              action: call-service
+              service: button.press
+              target:
+                entity_id: button.vmc_gateway_vmc_reset_filtri
+              confirmation:
+                text: Confermi reset filtri?
+          - type: custom:button-card
+            entity: button.vmc_gateway_vmc_carica_ultimo_evento
+            name: Ultimo Evento
+            icon: mdi:history
+            tap_action:
+              action: call-service
+              service: button.press
+              target:
+                entity_id: button.vmc_gateway_vmc_carica_ultimo_evento
+          - type: custom:button-card
+            entity: button.vmc_gateway_vmc_evento_precedente
+            name: Evento Prec.
+            icon: mdi:arrow-left-bold
+            tap_action:
+              action: call-service
+              service: button.press
+              target:
+                entity_id: button.vmc_gateway_vmc_evento_precedente
+          - type: custom:button-card
+            entity: button.vmc_gateway_vmc_evento_successivo
+            name: Evento Succ.
+            icon: mdi:arrow-right-bold
+            tap_action:
+              action: call-service
+              service: button.press
+              target:
+                entity_id: button.vmc_gateway_vmc_evento_successivo
+
+      - type: history-graph
+        title: Temperature VMC
+        hours_to_show: 24
+        refresh_interval: 60
+        entities:
+          - sensor.vmc_gateway_vmc_temperatura_display
+          - sensor.vmc_gateway_vmc_temperatura_immissione
+          - sensor.vmc_gateway_vmc_temperatura_ripresa
+          - sensor.vmc_gateway_vmc_temperatura_rinnovo
+          - sensor.vmc_gateway_vmc_temperatura_h2o_in
+          - sensor.vmc_gateway_vmc_temperatura_evaporatore
+          - sensor.vmc_gateway_vmc_temperatura_condensatore
+
+      - type: history-graph
+        title: Umidita VMC
+        hours_to_show: 24
+        refresh_interval: 60
+        entities:
+          - sensor.vmc_gateway_vmc_umidita_display_filtrata
+
+      - type: history-graph
+        title: Ventilatori e valvola
+        hours_to_show: 24
+        refresh_interval: 60
+        entities:
+          - sensor.vmc_gateway_vmc_velocita_ventilatore_espulsione
+          - sensor.vmc_gateway_vmc_velocita_ventilatore_immissione
+          - sensor.vmc_gateway_vmc_apertura_valvola_h2o_in
+
+      - type: history-graph
+        title: Stati macchina
+        hours_to_show: 24
+        refresh_interval: 60
+        entities:
+          - sensor.vmc_gateway_vmc_stato_accensione_compressore
+          - sensor.vmc_gateway_vmc_stato_alimentazione_ventilatori
+          - sensor.vmc_gateway_vmc_stato_apertura_bypass
+          - sensor.vmc_gateway_vmc_stato_apertura_ricircolo
+          - sensor.vmc_gateway_vmc_stato_apertura_valvola_scambiatore
+
+      - type: entities
+        title: Info tecniche
+        entities:
+          - sensor.vmc_gateway_vmc_software_type
+          - sensor.vmc_gateway_vmc_software_version
+          - binary_sensor.vmc_gateway_vmc_gateway_status
