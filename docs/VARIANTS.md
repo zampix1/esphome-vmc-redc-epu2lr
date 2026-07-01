@@ -39,5 +39,5 @@ Example:
 
 ## Recommendation
 
-- Use **RED C r9 / EPJ-Graph** if you are working on the same family already tested in this project.
-- Use **LET-C** only when your unit documentation matches the LET-C manual, especially in the upper register range.
+- **RED C r9 / EPJ-Graph** is the preferred mapping for units that match the family already field-tested in this project.
+- **LET-C** applies to units whose documentation matches the LET-C manual, especially in the upper register range.

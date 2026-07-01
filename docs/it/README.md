@@ -5,6 +5,7 @@ Questa cartella contiene il livello documentale in italiano per il repository pu
 ## Partenza rapida
 
 - [Modelli e unita supportate](modelli-e-unita-supportate.md)
+- [Media e riferimenti esterni](media-riferimento-esterni.md)
 - [Politica fonti](politica-fonti.md)
 
 ## Note tecniche approfondite

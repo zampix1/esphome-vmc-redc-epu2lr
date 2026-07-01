@@ -99,7 +99,7 @@ web_server:
   version: 3
 ```
 
-Poi importa il pacchetto della variante corretta.
+Importare il pacchetto corrispondente alla variante target.
 
 ## Documentazione
 
@@ -107,6 +107,7 @@ Documentazione nel repo:
 
 - [Indice docs ITA](docs/it/README.md)
 - [Docs index ENG](docs/en/README.md)
+- [Media e riferimenti esterni](docs/it/media-riferimento-esterni.md)
 - [Varianti](docs/VARIANTS.md)
 - [Logica operativa RED C](docs/VMC_LOGICA_OPERATIVA.md)
 - [Analisi hardware EVCO](docs/EVCO_EPU2LR_ANALISI.md)
@@ -120,6 +121,29 @@ GitHub Wiki:
 
 - Discussions: <https://github.com/zampix1/esphome-vmc-redc-epu2lr/discussions>
 - Issues: per bug riproducibili e mapping mancanti
+
+## Media e riferimenti esterni
+
+Immagini ufficiali VMC Italia ospitate sul sito vendor:
+
+- LET-C 15-30: <https://www.vmcitalia.it/wp-content/uploads/2026/03/letc_1530.jpg>
+- LET-C 15-30 V: <https://www.vmcitalia.it/wp-content/uploads/2026/03/letc_1530_vert.jpg>
+- LET-C 25-50: <https://www.vmcitalia.it/wp-content/uploads/2026/03/letc_2550.jpg>
+- LET-C 25-50 V: <https://www.vmcitalia.it/wp-content/uploads/2026/03/letc_2550_vert.jpg>
+
+Immagini esterne di riferimento:
+
+![LET-C 25-50](https://www.vmcitalia.it/wp-content/uploads/2026/03/letc_2550.jpg)
+![LET-C 25-50 V](https://www.vmcitalia.it/wp-content/uploads/2026/03/letc_2550_vert.jpg)
+
+PDF ufficiali prodotto e controllo:
+
+- Pagina prodotto LET-C: <https://www.vmcitalia.it/prodotto/deumidificatori-con-vmc-let-c/>
+- PDF prodotto LET-C 15-30: <https://www.vmcitalia.it/wp-content/uploads/2022/04/VMC_LET-C_15-30_H.pdf>
+- PDF prodotto LET-C 15-30 V: <https://www.vmcitalia.it/wp-content/uploads/2026/03/VMC_LET-C_15-30_V.pdf>
+- PDF prodotto LET-C 25-50: <https://www.vmcitalia.it/wp-content/uploads/2026/03/VMC_LET-C_25-50_H.pdf>
+- PDF prodotto LET-C 25-50 V: <https://www.vmcitalia.it/wp-content/uploads/2026/03/VMC_LET-C_25-50_V.pdf>
+- Guida controlli LET-C: <https://www.vmcitalia.it/wp-content/uploads/2026/03/Tipologie-di-controllo-unita_LET-C.pdf>
 
 ## CI
 
@@ -148,11 +172,11 @@ Vedi:
 
 ## Home Assistant
 
-Se vuoi la dashboard:
+Configurazione di esempio della dashboard:
 
-1. Copia `home-assistant/vmc-dashboard.yaml` oppure `home-assistant/vmc-dashboard-redc-r9.yaml` nella cartella dashboard di HA.
-2. Aggiungi la dashboard in `configuration.yaml`.
-3. Installa `button-card` se vuoi usare le card custom presenti nella dashboard.
+1. Copiare `home-assistant/vmc-dashboard.yaml` oppure `home-assistant/vmc-dashboard-redc-r9.yaml` nella cartella dashboard di Home Assistant.
+2. Aggiungere la dashboard in `configuration.yaml`.
+3. Installare `button-card` quando si utilizzano le card custom incluse nella dashboard.
 
 ## Licenza
 
