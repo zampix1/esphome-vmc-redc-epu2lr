@@ -90,6 +90,7 @@ packages:
 - The package intentionally uses authenticated back-to-back Modbus writes for protected installer parameters.
 - Invalid CAN temperature/humidity sensors are hidden internally.
 - Temperature and percentage sensors include sanity filters to avoid sentinel spikes.
+- Register addresses in this project are `Base 0`. In the RED C PDF, OCR/text extraction often shows the hexadecimal address (`Base 0`) together with the decimal `Base 1` column, which can look like an off-by-one error if read too quickly.
 - This is not an official EVCO or RED C project.
 
 ## Home Assistant

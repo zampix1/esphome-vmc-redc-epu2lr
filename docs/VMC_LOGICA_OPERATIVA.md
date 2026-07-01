@@ -661,6 +661,20 @@ Nota critica: non lasciare il compressore forzato per piu' di 2 minuti senza cir
 
 ### Deumidifica, integrazione, I/O, bypass, allarmi, rete
 
+Nota sul manuale RED C r9: la tabella originale riporta sia `Indirizzo Base 0` sia `Indirizzo Base 1`.
+Negli estratti testuali/OCR spesso rimangono:
+
+- l'indirizzo esadecimale `0x....`, che coincide con il `Base 0`
+- il valore decimale della colonna `Base 1`
+
+Esempio:
+
+- `0x0097 152 Configurazione In1` significa:
+  - `Base 0 = 151` (perche `0x0097 = 151`)
+  - `Base 1 = 152`
+
+Nel progetto ESPHome stiamo usando indirizzamento `Base 0`.
+
 | Base 0 | Nome | Scala/enum | Uso |
 |---:|---|---|---|
 | 137 | Deumidifica ventilazione | bool | abilita Vauto da umidita |
