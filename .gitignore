@@ -1,0 +1,11 @@
+.esphome/
+.vscode/
+secrets.yaml
+secrets*.yaml
+*.esphomebundle.tar.gz
+*.bin
+*.elf
+*.factory.bin
+*.ota.bin
+*.log
+__pycache__/

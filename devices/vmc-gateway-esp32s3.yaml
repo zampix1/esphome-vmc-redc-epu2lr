@@ -1,0 +1,46 @@
+substitutions:
+  name: vmc-gateway
+  friendly_name: VMC Gateway
+  board: esp32-s3-devkitc-1
+  modbus_tx_pin: GPIO17
+  modbus_rx_pin: GPIO18
+  modbus_flow_control_pin: GPIO21
+
+esphome:
+  name: ${name}
+  friendly_name: ${friendly_name}
+  name_add_mac_suffix: true
+  project:
+    name: zampix1.vmc_redc_epu2lr
+    version: "0.1.0"
+
+dashboard_import:
+  package_import_url: github://zampix1/esphome-vmc-redc-epu2lr/devices/vmc-gateway-esp32s3.yaml@main
+  import_full_config: true
+
+esp32:
+  board: ${board}
+  framework:
+    type: arduino
+
+logger:
+  level: INFO
+
+api:
+
+ota:
+  - platform: esphome
+
+wifi:
+  ap:
+    ssid: "VMC-Gateway Fallback"
+    password: "vmcgateway123"
+
+captive_portal:
+
+web_server:
+  port: 80
+  version: 3
+
+packages:
+  vmc: github://zampix1/esphome-vmc-redc-epu2lr/packages/vmc_redc_epu2lr.yaml@main
