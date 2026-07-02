@@ -1,0 +1,8 @@
+* text=auto eol=lf
+
+*.md text eol=lf
+*.yaml text eol=lf linguist-detectable=true linguist-language=YAML
+*.yml text eol=lf linguist-detectable=true linguist-language=YAML
+*.ps1 text eol=lf linguist-vendored
+
+tools/** linguist-vendored

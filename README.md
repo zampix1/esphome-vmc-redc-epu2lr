@@ -7,6 +7,14 @@ Language:
 - English: this page
 - Italian: [README.it.md](README.it.md)
 
+## What Works
+
+- ESPHome packages for RED C r9 / EPJ-Graph and LET-C variants.
+- Importable example nodes for ESP32-S3 RS485 gateways.
+- Modbus RTU read/write mapping split by documented device variant.
+- Home Assistant dashboard examples for users who want a starting point.
+- Bilingual technical notes for register maps, source policy and operating logic.
+
 ## Project scope
 
 This repository currently targets two explicit Modbus variants:
