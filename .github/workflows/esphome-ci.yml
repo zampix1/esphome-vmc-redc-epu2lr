@@ -45,6 +45,7 @@ jobs:
           wifi_password: ci_wifi_password
           vmc_fallback_ap_password: ci_fallback_password
           EOF
+          cp secrets.yaml devices/secrets.yaml
 
       - name: Validate config
         run: >
