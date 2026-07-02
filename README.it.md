@@ -101,6 +101,26 @@ web_server:
 
 Importare il pacchetto corrispondente alla variante target.
 
+### Secret ESPHome richiesti
+
+Gli esempi importabili usano un secret per la password dell'access point fallback. Aggiungerlo a `secrets.yaml` di ESPHome:
+
+```yaml
+wifi_ssid: "la-tua-wifi"
+wifi_password: "la-tua-password"
+vmc_fallback_ap_password: "cambia-questa-password-lunga"
+```
+
+## Diagnostica integrata
+
+I pacchetti espongono diagnostica operativa per rendere piu veloce il debug sul campo:
+
+- deumidifica effettiva, basata su modalita attiva e stato compressore
+- indicatori di standby/consenso per funzioni richieste ma non realmente in marcia
+- stima del punto di rugiada dal display
+- margine evaporatore rispetto a una soglia bassa conservativa
+- sensore testuale con diagnosi operativa sintetica
+
 ## Documentazione
 
 Documentazione nel repo:

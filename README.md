@@ -101,6 +101,26 @@ web_server:
 
 Import the package that matches the target variant.
 
+### Required ESPHome secrets
+
+The importable device examples use a secret for the fallback access point password. Add it to your ESPHome `secrets.yaml`:
+
+```yaml
+wifi_ssid: "your-wifi"
+wifi_password: "your-password"
+vmc_fallback_ap_password: "change-this-long-password"
+```
+
+## Built-in diagnostics
+
+The packages expose operational diagnostics intended to make field troubleshooting faster:
+
+- effective dehumidification, based on active mode plus compressor state
+- standby/consent indicators for requested functions that are not actually running
+- display dew point estimate
+- evaporator margin against a conservative low-temperature threshold
+- a short operational diagnostic text sensor
+
 ## Documentation
 
 Repo docs:

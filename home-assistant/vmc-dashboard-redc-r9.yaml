@@ -7,7 +7,7 @@ views:
       - type: conditional
         conditions:
           - entity: binary_sensor.vmc_gateway_vmc_online
-            state: "off"
+            state_not: "on"
         card:
           type: markdown
           content: |
@@ -39,6 +39,16 @@ views:
           - entity: sensor.vmc_gateway_vmc_modalita_attiva_testo
             name: Modalita
             icon: mdi:air-filter
+
+      - type: entities
+        title: Diagnostica operativa
+        entities:
+          - sensor.vmc_gateway_vmc_diagnostica_operativa
+          - binary_sensor.vmc_gateway_vmc_deumidifica_effettiva
+          - binary_sensor.vmc_gateway_vmc_funzioni_in_standby
+          - binary_sensor.vmc_gateway_vmc_standby_consenso
+          - sensor.vmc_gateway_vmc_punto_rugiada_display
+          - sensor.vmc_gateway_vmc_margine_evaporatore
 
       - type: grid
         title: Gauge rapidi

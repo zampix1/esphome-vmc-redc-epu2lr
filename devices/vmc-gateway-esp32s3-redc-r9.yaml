@@ -34,7 +34,7 @@ ota:
 wifi:
   ap:
     ssid: "VMC-Gateway Fallback"
-    password: "vmcgateway123"
+    password: !secret vmc_fallback_ap_password
 
 captive_portal:
 

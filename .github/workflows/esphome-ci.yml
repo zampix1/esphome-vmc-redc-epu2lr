@@ -38,6 +38,14 @@ jobs:
       - name: Show ESPHome version
         run: python -m esphome version
 
+      - name: Create CI ESPHome secrets
+        run: |
+          cat > secrets.yaml <<'EOF'
+          wifi_ssid: ci_wifi
+          wifi_password: ci_wifi_password
+          vmc_fallback_ap_password: ci_fallback_password
+          EOF
+
       - name: Validate config
         run: >
           python -m esphome

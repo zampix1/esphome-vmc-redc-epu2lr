@@ -59,6 +59,7 @@ binary_sensor:
 
   - platform: modbus_controller
     modbus_controller_id: vmc_ctrl
+    id: vmc_compressore_attivo
     name: "VMC Compressore Attivo"
     register_type: read
     address: 38
@@ -141,6 +142,33 @@ binary_sensor:
     address: 49
     bitmask: 1
 
+  - platform: template
+    id: vmc_funzioni_in_standby
+    name: "VMC Funzioni in Standby"
+    lambda: |-
+      if (!id(vmc_modalita_attiva).has_state()) return {};
+      const int mode = (int) id(vmc_modalita_attiva).state;
+      return mode >= 11 && mode <= 17;
+    device_class: problem
+
+  - platform: template
+    id: vmc_deumidifica_effettiva
+    name: "VMC Deumidifica Effettiva"
+    lambda: |-
+      if (!id(vmc_modalita_attiva).has_state() || !id(vmc_compressore_attivo).has_state()) return {};
+      const int mode = (int) id(vmc_modalita_attiva).state;
+      const bool deum_requested = mode == 2 || mode == 4 || mode == 6 || mode == 8 || mode == 12 || mode == 14 || mode == 15 || mode == 17;
+      return deum_requested && id(vmc_compressore_attivo).state;
+
+  - platform: template
+    id: vmc_standby_consenso
+    name: "VMC Standby Consenso"
+    lambda: |-
+      if (!id(vmc_modalita_attiva).has_state()) return {};
+      const int mode = (int) id(vmc_modalita_attiva).state;
+      return mode == 12 || mode == 13 || mode == 14 || mode == 15 || mode == 16 || mode == 17;
+    device_class: problem
+
 sensor:
   - platform: modbus_controller
     modbus_controller_id: vmc_ctrl
@@ -210,6 +238,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: vmc_ctrl
+    id: vmc_temperatura_h2o_in
     name: "VMC Temperatura H2O IN"
     register_type: read
     address: 28
@@ -242,6 +271,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: vmc_ctrl
+    id: vmc_temperatura_evaporatore
     name: "VMC Temperatura Evaporatore"
     register_type: read
     address: 30
@@ -258,6 +288,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: vmc_ctrl
+    id: vmc_temperatura_display
     name: "VMC Temperatura Display"
     register_type: read
     address: 31
@@ -300,6 +331,35 @@ sensor:
       const float v = id(vmc_umidita_display).state;
       if (!isnan(v) && v >= 0.0f && v <= 100.0f) return v;
       return {};
+    update_interval: 10s
+
+  - platform: template
+    id: vmc_punto_rugiada_display
+    name: "VMC Punto Rugiada Display"
+    unit_of_measurement: "°C"
+    device_class: temperature
+    state_class: measurement
+    accuracy_decimals: 1
+    lambda: |-
+      if (!id(vmc_temperatura_display).has_state() || !id(vmc_umidita_display_filtrata).has_state()) return {};
+      const float t = id(vmc_temperatura_display).state;
+      const float rh = id(vmc_umidita_display_filtrata).state;
+      if (isnan(t) || isnan(rh) || rh <= 0.0f || rh > 100.0f) return {};
+      const float a = 17.62f;
+      const float b = 243.12f;
+      const float gamma = (a * t / (b + t)) + logf(rh / 100.0f);
+      return (b * gamma) / (a - gamma);
+    update_interval: 10s
+
+  - platform: template
+    id: vmc_margine_evaporatore
+    name: "VMC Margine Evaporatore"
+    unit_of_measurement: "°C"
+    state_class: measurement
+    accuracy_decimals: 1
+    lambda: |-
+      if (!id(vmc_temperatura_evaporatore).has_state()) return {};
+      return id(vmc_temperatura_evaporatore).state - (-10.0f);
     update_interval: 10s
 
   - platform: modbus_controller
@@ -538,6 +598,21 @@ text_sensor:
         case 17: return {"Vent+Deu+Int STBY"};
         default: return {"unknown"};
       }
+    update_interval: 10s
+
+  - platform: template
+    name: "VMC Diagnostica Operativa"
+    lambda: |-
+      if (!id(vmc_modalita_attiva).has_state() || !id(vmc_compressore_attivo).has_state()) return {"unknown"};
+      const int mode = (int) id(vmc_modalita_attiva).state;
+      const bool compressor = id(vmc_compressore_attivo).state;
+      const bool deum_requested = mode == 2 || mode == 4 || mode == 6 || mode == 8 || mode == 12 || mode == 14 || mode == 15 || mode == 17;
+      if (mode == 17) return {"Vent+Deum+Integ in standby"};
+      if (mode >= 12 && mode <= 16) return {"Funzione richiesta ma in standby"};
+      if (deum_requested && compressor) return {"Deumidifica attiva con compressore"};
+      if (deum_requested && !compressor) return {"Deumidifica richiesta ma compressore fermo"};
+      if (mode == 0 || mode == 11) return {"VMC spenta o in standby"};
+      return {"VMC in funzione"};
     update_interval: 10s
 
   - platform: template
