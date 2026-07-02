@@ -50,8 +50,8 @@ Il manuale applicativo RED C r9 e stato usato durante sviluppo e validazione sul
 Accettati nel repo pubblico:
 
 - diagrammi originali
-- screenshot originali prodotti dal tuo ambiente HA/ESPHome
-- foto originali di tua proprieta
+- screenshot originali prodotti da un ambiente HA/ESPHome locale
+- foto originali di proprieta del contributore
 - asset di terzi solo se i termini di ridistribuzione sono espliciti
 
 Non accettati di default:

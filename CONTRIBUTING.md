@@ -13,12 +13,12 @@ This repository is for:
 
 ## Before changing mappings
 
-Always state which variant you are touching:
+Every mapping change must state the affected variant:
 
 - `RED C r9 / EPJ-Graph`
 - `LET-C`
 
-Do not move registers between them unless you can justify the change with:
+Registers should not be moved between variants unless the change is justified by:
 
 - field validation, or
 - an official source that clearly matches the target unit
@@ -27,7 +27,7 @@ All register addresses in this repo are **Base 0**.
 
 ## Sources and media
 
-Do not add third-party manuals, datasheets, screenshots or vendor product photos to this repository unless you have:
+Third-party manuals, datasheets, screenshots or vendor product photos should not be added to this repository unless one of the following is available:
 
 - explicit written permission, or
 - a license that clearly allows redistribution
@@ -35,7 +35,7 @@ Do not add third-party manuals, datasheets, screenshots or vendor product photos
 Preferred approach:
 
 - link to the official source
-- summarize the relevant data in your own words
+- summarize the relevant data in original wording
 - record what was validated on real hardware and what is only document-derived
 
 ## Discussions vs issues

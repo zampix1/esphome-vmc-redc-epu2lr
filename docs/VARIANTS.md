@@ -7,10 +7,10 @@ This repository contains two different Modbus mappings that belong to the same E
 - Package: `packages/vmc_redc_r9_epjgraph.yaml`
 - Device import: `devices/vmc-gateway-esp32s3-redc-r9.yaml`
 - Source basis:
-  - field validation on the working gateway
+  - field validation on the installed gateway
   - RED C r9 EPJ-Graph manual
 
-This is the most trusted variant in the repository because it was both tested on the real unit and cross-checked against the manual.
+This is the most trusted variant in the repository because it was field-tested and cross-checked against the manual.
 
 ## LET-C
 

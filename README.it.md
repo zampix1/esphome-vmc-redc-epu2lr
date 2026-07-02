@@ -106,14 +106,14 @@ Importare il pacchetto corrispondente alla variante target.
 Gli esempi importabili usano un secret per la password dell'access point fallback. Aggiungerlo a `secrets.yaml` di ESPHome:
 
 ```yaml
-wifi_ssid: "la-tua-wifi"
-wifi_password: "la-tua-password"
+wifi_ssid: "wifi-esempio"
+wifi_password: "password-esempio"
 vmc_fallback_ap_password: "cambia-questa-password-lunga"
 ```
 
 ## Diagnostica integrata
 
-I pacchetti espongono diagnostica operativa per rendere piu veloce il debug sul campo:
+I pacchetti espongono diagnostica operativa per rendere piu rapida l'analisi sul campo:
 
 - deumidifica effettiva, basata su modalita attiva e stato compressore
 - indicatori di standby/consenso per funzioni richieste ma non realmente in marcia

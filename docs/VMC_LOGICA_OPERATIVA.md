@@ -2,7 +2,7 @@
 
 Fonte analizzata: manuale applicativo RED C r9 / EPJ-Graph usato durante la validazione sul campo.
 
-Questa nota sintetizza la logica funzionale della macchina, non la parte meccanica di installazione. Gli indirizzi Modbus sono indicati in **base 0**, coerenti con Home Assistant/ESPHome e con la vecchia configurazione funzionante.
+Questa nota sintetizza la logica funzionale della macchina, non la parte meccanica di installazione. Gli indirizzi Modbus sono indicati in **base 0**, coerenti con Home Assistant/ESPHome.
 
 ## 0. Conferme dalla rilettura del PDF
 
@@ -14,10 +14,10 @@ Conferme operative importanti:
 - Se le fasce orarie sono attive, sul controllo EPJ-Graph i setpoint rapidi e le funzioni non sono modificabili: i valori vengono mostrati come `--` oppure compare l'avviso relativo alle fasce orarie attive.
 - Il menu rapido setpoint del controllo remoto include anche la pagina/calcolo del punto di rugiada; e' un indizio chiaro che il costruttore si aspetta un uso "guidato" dei setpoint di umidita, soprattutto in estate.
 - Il parametro `Set minima umidita ambiente impostabile` (`n-ur`, Modbus base0 `105`) e' un vincolo reale della macchina, non solo descrittivo: il manuale dice esplicitamente che **non e' possibile impostare setpoint di umidita inferiori a questo valore**.
-- Il valore minimo umidita e' nella pagina installatore `6.a Set point`, mentre i setpoint utente stanno nella prima pagina: quindi e' normale che da interfaccia utente sembri che `ur-I`/`ur-E` "rimbalzino", quando in realta' vengono limitati dal minimo installatore.
+- Il valore minimo umidita e' nella pagina installatore `6.a Set point`, mentre i setpoint utente stanno nella prima pagina: valori `ur-I`/`ur-E` inferiori al minimo installatore vengono quindi respinti o riportati al limite ammesso.
 - Il cambio stagione automatico usa una logica mista calendario + temperatura esterna/rinnovo + tempo di permanenza sopra/sotto soglia; non e' un semplice toggle temperatura.
 - La funzione deumidifica con compressore puo' essere limitata per stagione e non puo' convivere liberamente con tutte le combinazioni di integrazione; il manuale segnala esplicitamente che la deumidifica con compressore in inverno non e' attivabile se e' gia' attiva l'integrazione nella stessa stagione.
-- Le schermate illustrative del manuale confermano che il display/EPJ-Graph non e' un semplice pannello "stupido": espone vincoli, stati di standby, fasce orarie, allarmi e rete CAN in modo coerente con la logica interna della scheda.
+- Le schermate illustrative del manuale confermano che il display/EPJ-Graph non e' un semplice pannello passivo: espone vincoli, stati di standby, fasce orarie, allarmi e rete CAN in modo coerente con la logica interna della scheda.
 
 ## 1. Modello mentale della macchina
 
@@ -673,7 +673,7 @@ Esempio:
   - `Base 0 = 151` (perche `0x0097 = 151`)
   - `Base 1 = 152`
 
-Nel progetto ESPHome stiamo usando indirizzamento `Base 0`.
+Il progetto ESPHome usa indirizzamento `Base 0`.
 
 | Base 0 | Nome | Scala/enum | Uso |
 |---:|---|---|---|
@@ -740,7 +740,7 @@ Correzioni rispetto al vecchio backup:
 - uscite DO 38-44 sono R/O e nel manuale stanno nella stessa area input/status: se con `holding` danno problemi, leggerle come `read`;
 - percentuali AO 35-37: `U_WORD * 0.01`;
 - umidita display va filtrata 0-100%;
-- la vecchia logica HA con `modbus.write_register` va sostituita da entita ESPHome native o lambda che scrive registri.
+- la logica Home Assistant basata su `modbus.write_register` va sostituita da entita ESPHome native o lambda che scrivono registri.
 
 Da aggiungere in seconda fase:
 

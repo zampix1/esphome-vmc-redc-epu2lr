@@ -50,8 +50,8 @@ The RED C r9 application manual was used during development and field validation
 Accepted in the public repo:
 
 - original diagrams
-- original screenshots produced from your own HA/ESPHome environment
-- original photos you own
+- original screenshots produced from a local HA/ESPHome environment
+- original photos owned by the contributor
 - third-party assets only when the redistribution terms are explicit
 
 Not accepted by default:

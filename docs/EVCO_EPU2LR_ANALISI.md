@@ -51,9 +51,9 @@ Nel datasheet `104CP3K0A103` la piattaforma e' descritta cosi', in sostanza:
 - CAN
 - RS-485 Modbus slave
 
-Questo combacia bene con la VMC che stiamo leggendo.
+Questa dotazione e' coerente con le unita VMC coperte dal progetto.
 
-## 3. Cosa implica per il tuo EPU2LR
+## 3. Implicazioni per EPU2LR
 
 Il codice articolo `EPU2LR` non compare in chiaro nel testo estratto dei PDF, ma dato che il modello e' stato confermato sul campo e dato l'hardware osservato, il quadro coerente e' questo:
 
@@ -62,7 +62,7 @@ Il codice articolo `EPU2LR` non compare in chiaro nel testo estratto dei PDF, ma
 - espone Modbus RTU slave su RS-485
 - supporta backup/restore parametri via USB
 
-La VMC che stiamo interrogando via ESPHome si comporta esattamente come ci si aspetta da questa piattaforma:
+La VMC validata via ESPHome si comporta in modo coerente con questa piattaforma:
 
 - pannello remoto su CAN
 - macchina principale su RS-485 Modbus slave
@@ -95,7 +95,7 @@ I manuali EVCO confermano che:
 - la rete CAN ha terminazione inseribile via micro-switch
 - lo stato CAN e il baud rate si possono vedere/configurare da menu
 
-Questo spiega bene la struttura che hai in macchina:
+Questo spiega la struttura tipica dell'unita:
 
 - controllore EPU2LR dentro la VMC
 - EPJ-Graph a muro come terminale remoto
@@ -117,14 +117,14 @@ I manuali EVCO confermano:
   - parita'
   - bit di stop
 
-Questo e' coerente con quanto hai gia' trovato sulla tua macchina:
+La baseline validata sul campo e' coerente con questa configurazione:
 
 - `19200`
 - `N`
 - `2 stop bit`
 - `address 1`
 
-Quindi il gateway ESPHome che hai ora sta parlando con un'interfaccia assolutamente prevista dall'hardware EVCO.
+Il gateway ESPHome usa quindi un'interfaccia prevista dall'hardware EVCO.
 
 ## 7. USB backup/restore parametri
 
@@ -133,7 +133,7 @@ I manuali hardware EVCO confermano in modo esplicito che tramite USB e' possibil
 - copiare i parametri dal controllore a una periferica USB
 - copiare i parametri da USB al controllore
 
-Questa e' una conferma importante per la tua strategia di backup:
+Questa conferma abilita due livelli complementari di backup:
 
 - backup nativo EVCO via USB
 - snapshot operativo via Modbus/ESPHome/Home Assistant
@@ -142,41 +142,41 @@ Le due cose sono complementari, non alternative.
 
 ## 8. Cosa i manuali EVCO non bastano a spiegare
 
-I manuali EVCO hardware non ti dicono:
+I manuali EVCO hardware non descrivono:
 
 - la semantica dei registri RED C
-- perche' `Set min UR` clampa `ur-I` e `ur-E`
+- perche' `Set min UR` limita `ur-I` e `ur-E`
 - le priorita' tra fasce orarie, stagioni, ingressi remoti e automatico
 - la logica deumidifica/integrazione/bypass
 
 Queste cose appartengono al firmware applicativo RED C e sono documentate nel manuale RED C, non nel manuale EVCO hardware.
 
-In altre parole:
+Sintesi:
 
-- EVCO dice **che hardware hai**
-- RED C dice **cosa quel firmware fa con quell'hardware**
+- EVCO descrive **l'hardware**
+- RED C descrive **cosa il firmware applicativo fa con quell'hardware**
 
-## 9. Cose utili che possiamo sfruttare meglio
+## 9. Leve utili per il progetto
 
 Da questi manuali, le leve concrete ancora utili per il progetto sono:
 
 - USB backup/restore parametri del controllore
 - controllo accurato delle terminazioni CAN / RS-485
-- verifica del baud CAN se il terminale EPJ-Graph fa scherzi
+- verifica del baud CAN in caso di problemi sul terminale EPJ-Graph
 - eventuale esposizione in HA dei parametri di rete e dei parametri installatore piu' rilevanti
 
 ## 10. Conclusione tecnica
 
-La tua architettura adesso e' chiara:
+Architettura tecnica di riferimento:
 
-- **controller macchina**: EVCO `c-pro 3 kilo`, modello confermato da te `EPU2LR`
+- **controller macchina**: EVCO `c-pro 3 kilo`, modello validato sul campo `EPU2LR`
 - **terminale utente remoto**: EPJ-Graph su CAN
 - **bus integrazione esterna**: RS-485 Modbus slave
 - **backup nativo**: USB
 - **logica funzionale VMC**: firmware OEM RED C, non genericamente EVCO
 
-Il punto importante non e' solo "sappiamo il modello". Il punto importante e' che ora sappiamo con buona certezza quali parti del comportamento vengono:
+Il punto tecnico principale e' separare le responsabilita del sistema:
 
 - dall'hardware EVCO
 - dal firmware applicativo RED C
-- dalla tua configurazione attuale lato setpoint / fasce orarie / password / sensori
+- dalla configurazione installata lato setpoint, fasce orarie, password e sensori

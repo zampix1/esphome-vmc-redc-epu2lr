@@ -103,11 +103,11 @@ Import the package that matches the target variant.
 
 ### Required ESPHome secrets
 
-The importable device examples use a secret for the fallback access point password. Add it to your ESPHome `secrets.yaml`:
+The importable device examples use a secret for the fallback access point password. Add the following keys to the ESPHome `secrets.yaml` file:
 
 ```yaml
-wifi_ssid: "your-wifi"
-wifi_password: "your-password"
+wifi_ssid: "example-wifi"
+wifi_password: "example-password"
 vmc_fallback_ap_password: "change-this-long-password"
 ```
 

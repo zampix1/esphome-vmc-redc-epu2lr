@@ -33,7 +33,7 @@ Additional notes:
 
 - RED C 15-30 uses the 150/300 class.
 - RED C 25-50 uses the 250/500 class.
-- The RED C package in this repository is the most trusted one because it was cross-checked against a working unit and the application manual.
+- The RED C package in this repository is the most trusted one because it was field-tested and cross-checked against the application manual.
 
 ## LET-C family
 
