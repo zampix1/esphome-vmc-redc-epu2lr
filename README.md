@@ -129,12 +129,23 @@ The packages expose operational diagnostics intended to make field troubleshooti
 - evaporator margin against a conservative low-temperature threshold
 - a short operational diagnostic text sensor
 
+## Assisted evaporator thaw: field status
+
+An installation-specific Home Assistant thaw supervisor was used successfully throughout the 2026 summer season on the reference RED C r9 / EPJ-Graph installation with an EVCO EPU2LR controller. The operator confirmed this field result on 2026-10-25.
+
+The supervisor temporarily suspends dehumidification and uses indoor-air recirculation to warm the evaporator. It does not directly force the compressor and does not replace the controller's built-in frost protection.
+
+The field result applies to that installation, not to every RED C or LET-C variant. Summer-only interlocks were verified separately on 2026-10-25. The reusable Home Assistant supervisor is **not yet included in this repository**; importing an ESPHome package does not install or enable it.
+
+See [assisted evaporator thaw and validation scope](docs/en/assisted-evaporator-thaw.md) for the tested sequence, thresholds, seasonal safeguards and remaining release checks.
+
 ## Documentation
 
 Repo docs:
 
 - [Italian docs index](docs/it/README.md)
 - [English docs index](docs/en/README.md)
+- [Assisted evaporator thaw: field report and safeguards](docs/en/assisted-evaporator-thaw.md)
 - [External reference media](docs/en/external-reference-media.md)
 - [Variants](docs/VARIANTS.md)
 - [RED C operating logic](docs/VMC_LOGICA_OPERATIVA.md)

@@ -5,6 +5,7 @@ This folder contains the English-facing documentation layer for the public repos
 ## Start here
 
 - [Models and supported units](models-and-supported-units.md)
+- [Assisted evaporator thaw: field report and safeguards](assisted-evaporator-thaw.md)
 - [External reference media](external-reference-media.md)
 - [Source policy](source-policy.md)
 
