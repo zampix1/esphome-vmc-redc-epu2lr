@@ -12,6 +12,8 @@ This repository contains two different Modbus mappings that belong to the same E
 
 This is the most trusted variant in the repository because it was field-tested and cross-checked against the manual.
 
+An installation-specific Home Assistant assisted-thaw supervisor was also used successfully throughout summer 2026 on the reference RED C / EPU2LR installation, as confirmed by the operator on 2026-10-25. This is a separate field result: it does not validate every model size or extend to LET-C. The reusable supervisor is not yet shipped with the ESPHome packages. See the [English field report](en/assisted-evaporator-thaw.md) or [Italian field report](it/scongelamento-assistito-evaporatore.md).
+
 ## LET-C
 
 - Package: `packages/vmc_let_c.yaml`

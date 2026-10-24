@@ -121,12 +121,23 @@ I pacchetti espongono diagnostica operativa per rendere piu rapida l'analisi sul
 - margine evaporatore rispetto a una soglia bassa conservativa
 - sensore testuale con diagnosi operativa sintetica
 
+## Scongelamento assistito evaporatore: stato sul campo
+
+Un supervisore Home Assistant specifico dell'installazione e stato utilizzato con esito positivo durante l'intera stagione estiva 2026 sull'impianto RED C r9 / EPJ-Graph di riferimento, con controllore EVCO EPU2LR. La conferma d'uso e stata raccolta il 2026-10-25.
+
+Il supervisore sospende temporaneamente la deumidificazione e utilizza il ricircolo dell'aria interna per scaldare l'evaporatore. Non forza direttamente il compressore e non sostituisce le protezioni antigelo native del controllore.
+
+Il risultato riguarda quell'installazione, non tutte le varianti RED C o LET-C. I blocchi per consentire il ciclo solo in Estate sono stati verificati separatamente il 2026-10-25. Il supervisore Home Assistant riutilizzabile **non e ancora incluso nel repository**: importare un pacchetto ESPHome non lo installa e non lo abilita.
+
+La nota [scongelamento assistito e ambito di validazione](docs/it/scongelamento-assistito-evaporatore.md) descrive sequenza, soglie, vincoli stagionali e verifiche ancora necessarie per la distribuzione.
+
 ## Documentazione
 
 Documentazione nel repo:
 
 - [Indice docs ITA](docs/it/README.md)
 - [Docs index ENG](docs/en/README.md)
+- [Scongelamento assistito: riscontro sul campo e protezioni](docs/it/scongelamento-assistito-evaporatore.md)
 - [Media e riferimenti esterni](docs/it/media-riferimento-esterni.md)
 - [Varianti](docs/VARIANTS.md)
 - [Logica operativa RED C](docs/VMC_LOGICA_OPERATIVA.md)
